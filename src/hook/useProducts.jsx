@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '../servicse/product';
 
 
-export default function useProduct() {
+export default function useProducts() {
   const query = useQuery({
     queryKey: ["products"],
     queryFn: getProducts,

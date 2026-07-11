@@ -1,13 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '../servicse/product'; // Note: check your spelling of 'services' here too!
 import { CircularProgress, Box } from '@mui/material';
-
+import useProducts  from '../hook/useProducts';
 export default function Product() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["products"],
-    queryFn: getProducts,
-    staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
-  });
+  const { data, isLoading } = useProducts();
 
   console.log("Products fetched successfully:", data?.data); // Optional chaining to avoid errors if data is undefined
 
