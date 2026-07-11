@@ -1,3 +1,8 @@
 :root {
-  --primary-color: #7C3AED; /* اللون البنفسجي الخاص بك */
+  --primary-color: #7C3AED;
+  --secondary-color: #737373;
+  --primary-color-dark: #5B21B6;
+}
+body, html, * {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
 }

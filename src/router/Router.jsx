@@ -5,6 +5,7 @@ import AuthLayout from "../layout/AuthLayout";
 import Login  from "../pages/auth/Login";
 import  Register  from "../pages/auth/Register";
 import Categories from "../pages/Categories";
+import Product from "../pages/Product";
 const router = createBrowserRouter([
     {
         
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
         {
           path: "categories",
           element: <Categories />
+        },
+        {
+          path: "all-products",
+          element: <Product />
         }
       
     ]

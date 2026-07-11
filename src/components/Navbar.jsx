@@ -87,6 +87,7 @@ export default function Navbar() {
 
   return (
     <AppBar
+      className="container"
       position="sticky"
       elevation={0}
       sx={{
@@ -138,7 +139,7 @@ export default function Navbar() {
                 textTransform: "none",
                 fontSize: "0.875rem",
                 fontWeight: 500,
-                color: activeTab === link ? "var(--primary-color, #7C3AED)" : "#737373",
+                color: activeTab === link ? "var(--primary-color, #7C3AED)" : "var(--secondary-color)",
                 "&:hover": {
                   color: "var(--primary-color, #7C3AED)",
                   backgroundColor: "transparent",
@@ -299,7 +300,7 @@ export default function Navbar() {
                 fontWeight: 500,
                 py: 1,
                 borderBottom: "1px solid #FAFAFA",
-                color: activeTab === link ? "var(--primary-color, #7C3AED)" : "#737373",
+                color: activeTab === link ? "var(--primary-color, #7C3AED)" : "var(--secondary-color",
               }}
             >
               {link}

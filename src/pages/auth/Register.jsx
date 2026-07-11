@@ -79,7 +79,7 @@ const handleCloseSnackbar = (event, reason) => {
       <Box sx={{ textAlign: "center", mb: 4 }}>
         <Typography
           variant="body2"
-          sx={{ color: "#737373", mt: 0.5, fontSize: "0.75rem" }}
+          sx={{ color: "var(--secondary-color)", mt: 0.5, fontSize: "0.75rem" }}
         >
           Join our curated premium marketplace.
         </Typography>
@@ -347,7 +347,7 @@ const handleCloseSnackbar = (event, reason) => {
         <Box sx={{ mt: 3, textAlign: "center" }}>
           <Typography
             variant="body2"
-            sx={{ color: "#737373", fontSize: "0.75rem" }}
+            sx={{ color: "var(--secondary-color)", fontSize: "0.75rem" }}
           >
             Already have an account?{" "}
             <Link

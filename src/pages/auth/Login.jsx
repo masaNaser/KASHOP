@@ -77,7 +77,7 @@ const handleCloseSnackbar = (event, reason) => {
       <Box sx={{ textAlign: "center", mb: 4 }}>
         <Typography
           variant="body2"
-          sx={{ color: "#737373", mt: 0.5, fontSize: "0.75rem" }}
+          sx={{ color: "var(--secondary-color)", mt: 0.5, fontSize: "0.75rem" }}
         >
           Join our curated premium marketplace.
         </Typography>
