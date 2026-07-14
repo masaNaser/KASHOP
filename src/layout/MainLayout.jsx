@@ -1,16 +1,16 @@
-import { Outlet } from "react-router-dom"
-import { Footer } from "../components/Footer"
-import Navbar from "../components/Navbar"
-
+import { Outlet } from "react-router-dom";
+import { Footer } from "../components/Footer";
+import Navbar from "../components/Navbar";
+import { Container } from "@mui/material";
 
 export const MainLayout = () => {
   return (
     <>
-      <Navbar />
-      <Outlet />
+      <Container>
+        <Navbar />
+        <Outlet />
+      </Container>
       <Footer />
     </>
-  )
-}
-
-
+  );
+};
