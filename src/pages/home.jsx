@@ -1,13 +1,14 @@
 import { Box, Typography, Button} from '@mui/material';
 import heroBackground from '../../src/assets/heroBackground.png';
 import Categories from '../../src/pages/Categories.jsx';
+import Product from '../../src/pages/product/Product.jsx';
 
 
 
 export default function Home() {
   return (
     <>
-      <Box className="container"
+      <Box
         sx={{
           // 1. إعداد الخلفية
           backgroundImage: `url(${heroBackground})`,
@@ -94,9 +95,8 @@ export default function Home() {
           </Button>
         </Box>
       </Box>
-      <Box className="container">
         <Categories />
-      </Box>
+        <Product />
       </>
   );
 }

@@ -8,10 +8,10 @@ import {
   CardActions,
   Button,
   Grid,
+  Rating
 } from "@mui/material";
 import useProducts from "../../hook/useProducts";
 import { Link } from "react-router-dom";
-import StarIcon from "@mui/icons-material/Star";
 export default function Product() {
   const { data, isLoading } = useProducts();
 
@@ -91,15 +91,7 @@ export default function Product() {
                             alignItems: "center",
                           }}
                         >
-                          {/* نقوم بإنشاء مصفوفة بطول عدد التقييم، ثم نكرر أيقونة النجمة */}
-                          {Array.from({ length: product.rate }).map(
-                            (index) => (
-                              <StarIcon
-                                key={index}
-                                sx={{ color: "#FFD700", fontSize: "inherit" }}
-                              />
-                            ),
-                          )}
+                      <Rating value={product.rate || 0} readOnly precision={0.5} size="small" />
                         </Typography>
                       )}
                       <Typography
@@ -108,7 +100,7 @@ export default function Product() {
                           color: "text.secondary",
                           fontWeight: "bold",
 
-                          
+
                          }}
                       >
                         {product.price?.toFixed(2)}$
