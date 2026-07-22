@@ -78,7 +78,6 @@ export default function ProductDetails() {
           </Paper>
         </Grid>
 
-        {/* قسم معلومات المنتج (يمين على الشاشات الكبيرة) */}
         <Grid size={{ xs: 12, md: 7 }}>
           <Stack spacing={3}>
             

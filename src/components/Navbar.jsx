@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -9,8 +9,8 @@ import {
   InputBase,
   Menu,
   MenuItem,
-  Badge,
   Box,
+  Divider,
 } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import PersonIcon from "@mui/icons-material/Person";
@@ -22,8 +22,9 @@ import {
   Close as CloseIcon,
   Login as LoginIcon,
   PersonAdd as PersonAddIcon,
+  Logout as LogoutIcon,
 } from "@mui/icons-material";
-
+import useAuthStore from "../store/useAuthStore"; 
 const SearchWrapper = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: "50px",
@@ -33,12 +34,10 @@ const SearchWrapper = styled("div")(({ theme }) => ({
   },
   marginRight: theme.spacing(1),
   marginLeft: 0,
-  width: "240px",
-  display: "none",
-  [theme.breakpoints.up("sm")]: {
-    display: "flex",
-    alignItems: "center",
-  },
+  width: "100%",
+  maxWidth: "220px",
+  display: "flex",
+  alignItems: "center",
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -58,36 +57,31 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
     fontSize: "0.875rem",
     width: "100%",
-    "&:focus": {
-      backgroundColor: "#fff",
-      borderRadius: "50px",
-      boxShadow: `0 0 0 1px var(--primary-color, #7C3AED)`, 
-    },
   },
 }));
 
 export default function Navbar() {
-  const [activeTab, setActiveTab] = useState("Home");
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
+  const token = useAuthStore((state) => state.token); // جلب قيمة التوكن من الـ zustand store
+  console.log("Token in Navbar:", token); 
+  const logout = useAuthStore((state) => state.logout); // جلب دالة تسجيل الخروج من الـ zustand store
+  const location = useLocation();
 
-  const navLinks = ["Home", "Categories", "All Products"];
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Categories", path: "/categories" },
+    { name: "All Products", path: "/all-products" },
+  ];
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
   return (
     <AppBar
-      className="container"
       position="sticky"
       elevation={0}
       sx={{
@@ -97,99 +91,96 @@ export default function Navbar() {
       }}
     >
       <Toolbar
-        className="mx-auto w-full max-w-[1280px] px-6"
         sx={{
           height: 64,
+          maxWidth: "1280px",
+          width: "100%",
+          mx: "auto",
+          px: { xs: 2, sm: 3, md: 4 },
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          p: "0 !important", 
         }}
       >
+        {/* اللوجو KASHOP */}
         <Typography
           variant="h6"
-          noWrap
-          component="div"
+          component={Link}
+          to="/"
           sx={{
             fontWeight: 700,
-            letterSpacing: "-0.025em",
-            color: "var(--primary-color, #7C3AED)", 
-            fontSize: "1.5rem",
-            cursor: "pointer",
+            color: "var(--primary-color, #7C3AED)",
+            fontSize: { xs: "1.25rem", sm: "1.5rem" },
+            textDecoration: "none",
           }}
         >
           KASHOP
         </Typography>
 
+        {/* روابط الشاشات الكبيرة */}
         <Box
-          className="hidden md:flex"
-          sx={{ alignItems: "center", gap: 4, height: "100%" }}
+          sx={{
+            display: { xs: "none", md: "flex" },
+            alignItems: "center",
+            gap: { md: 2, lg: 4 },
+            height: "100%",
+          }}
         >
-          {navLinks.map((link) => (
-            <Button
-              key={link}
-              component={Link}
-              to={link === "Home" ? "/" : `/${link.toLowerCase().replace(" ", "-")}`}
-              onClick={() => setActiveTab(link)}
-              disableRipple
-              sx={{
-                position: "relative",
-                height: "64px",
-                borderRadius: 0,
-                textTransform: "none",
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                color: activeTab === link ? "var(--primary-color, #7C3AED)" : "var(--secondary-color)",
-                "&:hover": {
-                  color: "var(--primary-color, #7C3AED)",
-                  backgroundColor: "transparent",
-                },
-                "&::after": activeTab === link ? {
-                  content: '""',
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  height: "3px",
-                  width: "100%",
-                  borderRadius: "9999px",
-                  backgroundColor: "currentColor",
-                } : {},
-              }}
-            >
-              {link}
-            </Button>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path;
+            return (
+              <Button
+                key={link.name}
+                component={Link}
+                to={link.path}
+                disableRipple
+                sx={{
+                  position: "relative",
+                  height: "64px",
+                  borderRadius: 0,
+                  textTransform: "none",
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  color: isActive ? "var(--primary-color, #7C3AED)" : "#525252",
+                  "&:hover": {
+                    color: "var(--primary-color, #7C3AED)",
+                    backgroundColor: "transparent",
+                  },
+                  "&::after": isActive
+                    ? {
+                        content: '""',
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        height: "3px",
+                        width: "100%",
+                        borderRadius: "9999px",
+                        backgroundColor: "var(--primary-color, #7C3AED)",
+                      }
+                    : {},
+                }}
+              >
+                {link.name}
+              </Button>
+            );
+          })}
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          
+        {/* عناصر جهة اليمين في الشاشات الكبيرة */}
+        <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1.5 }}>
           <SearchWrapper>
             <SearchIconWrapper>
               <SearchIcon sx={{ fontSize: 20 }} />
             </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search..."
-              inputProps={{ "aria-label": "search" }}
-            />
+            <StyledInputBase placeholder="Search..." />
           </SearchWrapper>
 
-          <IconButton
-            sx={{
-              color: "#1A1A2E",
-              "&:hover": { color: "primary.main", backgroundColor: "#F8F9FC" },
-            }}
-          >
+          <IconButton sx={{ color: "#1A1A2E" }}>
             <LanguageIcon sx={{ fontSize: 22 }} />
           </IconButton>
 
-          <IconButton
-            onClick={handleProfileMenuOpen}
-            sx={{
-              color: "#1A1A2E",
-              "&:hover": { color:"var(--primary-color, #7C3AED)", backgroundColor: "#F8F9FC" },
-            }}
-          >
-            <PersonIcon  sx={{ fontSize: 24 }} />
+          <IconButton onClick={handleProfileMenuOpen} sx={{ color: "#1A1A2E" }}>
+            <PersonIcon sx={{ fontSize: 24 }} />
           </IconButton>
 
           <Menu
@@ -204,10 +195,9 @@ export default function Navbar() {
               sx: {
                 width: 192,
                 borderRadius: "12px",
-                mt: 9,
-                p: 0.75,
+                mt: 1,
                 border: "1px solid #F5F5F5",
-                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.05)",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)",
                 "& .MuiMenuItem-root": {
                   fontSize: "0.875rem",
                   borderRadius: "8px",
@@ -222,7 +212,14 @@ export default function Navbar() {
               },
             }}
           >
-            <MenuItem component={Link} to="/auth/login" >
+            {token ?(
+            <MenuItem component={Link} to="/auth/login" onClick={logout}>
+              <LogoutIcon sx={{ fontSize: 18 }} />
+              Log out
+            </MenuItem>
+          ):(
+            <>
+          <MenuItem component={Link} to="/auth/login">
               <LoginIcon sx={{ fontSize: 18 }} />
               Log In
             </MenuItem>
@@ -230,82 +227,201 @@ export default function Navbar() {
               <PersonAddIcon sx={{ fontSize: 18 }} />
               Register
             </MenuItem>
+            </>
+          )}
           </Menu>
 
-          <IconButton
-            sx={{
-              color: "#1A1A2E",
-              "&:hover": { color: "primary.main", backgroundColor: "#F8F9FC" },
-            }}
-          >
-            <Badge
-              badgeContent={2}
-              sx={{
-                "& .MuiBadge-badge": {
-                  backgroundColor: "#FF5A5F",
-                  color: "white",
-                  fontSize: "10px",
-                  fontWeight: "bold",
-                  height: 16,
-                  minWidth: 16,
-                },
-              }}
-            >
-              <ShoppingCartOutlinedIcon sx={{ fontSize: 22 }} />
-            </Badge>
+          {token && (
+         <IconButton sx={{ color: "#1A1A2E" }} component={Link} to="/cart">
+            <ShoppingCartOutlinedIcon sx={{ fontSize: 22 }} />
           </IconButton>
-
-          <IconButton
-            className="md:hidden"
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
-            sx={{
-              color: "#1A1A2E",
-              "&:hover": { backgroundColor: "#F8F9FC" },
-            }}
-          >
-            {isMobileOpen ? <CloseIcon /> : <MenuIcon />}
-          </IconButton>
+          )}
+          
         </Box>
+
+        {/* زر الـ 3 شحطات في الموبايل فقط */}
+        <IconButton
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+          sx={{
+            display: { xs: "flex", md: "none" },
+            color: "#1A1A2E",
+          }}
+        >
+          {isMobileOpen ? <CloseIcon /> : <MenuIcon />}
+        </IconButton>
       </Toolbar>
 
+      {/* قائمة الـ 3 شحطات للموبايل (مكتملة بكافة الأيقونات) */}
       {isMobileOpen && (
         <Box
-          className="md:hidden"
           sx={{
+            display: { xs: "flex", md: "none" },
             position: "absolute",
             top: 64,
             left: 0,
             width: "100%",
             backgroundColor: "white",
-            borderBottom: "1px solid #F5F5F5",
-            p: 3,
-            boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.05)",
-            display: "flex",
+            borderBottom: "1px solid #E5E5E5",
+            p: 2.5,
+            boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.08)",
             flexDirection: "column",
             gap: 2,
+            zIndex: 1000,
+            maxHeight: "calc(100vh - 80px)",
+            overflowY: "auto",
           }}
         >
-          {navLinks.map((link) => (
+          {/* 1. حقل البحث */}
+          <SearchWrapper sx={{ maxWidth: "100%", m: 0 }}>
+            <SearchIconWrapper>
+              <SearchIcon sx={{ fontSize: 20 }} />
+            </SearchIconWrapper>
+            <StyledInputBase placeholder="Search..." />
+          </SearchWrapper>
+
+          {/* 2. روابط الصفحات */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path;
+              return (
+                <Box
+                  key={link.name}
+                  component={Link}
+                  to={link.path}
+                  onClick={() => setIsMobileOpen(false)}
+                  sx={{
+                    textDecoration: "none",
+                    fontSize: "0.95rem",
+                    fontWeight: 500,
+                    py: 1,
+                    px: 1.5,
+                    borderRadius: "8px",
+                    color: isActive ? "var(--primary-color, #7C3AED)" : "#525252",
+                    backgroundColor: isActive ? "#F3F1FF" : "transparent",
+                  }}
+                >
+                  {link.name}
+                </Box>
+              );
+            })}
+          </Box>
+
+          <Divider sx={{ my: 0.5 }} />
+
+          {/* 3. عناصر الخدمات والأيقونات (السلة، اللغة، البروفايل) */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            
+            {/* أيقونة السلة مع الـ  */}
+            {token &&(
             <Box
-              key={link}
               component={Link}
-              to={link === "Home" ? "/" : `/${link.toLowerCase().replace(" ", "-")}`}
-              onClick={() => {
-                setActiveTab(link);
-                setIsMobileOpen(false);
-              }}
+              to="/cart" // أو مسار صفحة السلة لديك
+              onClick={() => setIsMobileOpen(false)}
               sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                p: 1.2,
+                borderRadius: "8px",
                 textDecoration: "none",
-                fontSize: "1rem",
-                fontWeight: 500,
-                py: 1,
-                borderBottom: "1px solid #FAFAFA",
-                color: activeTab === link ? "var(--primary-color, #7C3AED)" : "var(--secondary-color",
+                color: "#525252",
+                "&:hover": { backgroundColor: "#F8F9FC" },
               }}
             >
-              {link}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                <ShoppingCartOutlinedIcon sx={{ fontSize: 22, color: "#1A1A2E" }} />
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  Cart
+                </Typography>
+              </Box>
+          
             </Box>
-          ))}
+              )}
+            {/* أيقونة اللغة */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                p: 1.2,
+                borderRadius: "8px",
+                cursor: "pointer",
+                color: "#525252",
+                "&:hover": { backgroundColor: "#F8F9FC" },
+              }}
+            >
+              <LanguageIcon sx={{ fontSize: 22, color: "#1A1A2E" }} />
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                Language (EN)
+              </Typography>
+            </Box>
+          </Box>
+
+          <Divider sx={{ my: 0.5 }} />
+
+          {/* 4. أزرار تسجيل الدخول وإنشاء الحساب */}
+          <Box sx={{ display: "flex", gap: 1.5 }}>
+            {
+            token?
+            (
+              <Button
+              component={Link}
+              to="/auth/login"
+              onClick={() => {
+                logout();
+                setIsMobileOpen(false);
+              }}
+              fullWidth
+              variant="outlined"
+              startIcon={<LogoutIcon />}
+              sx={{
+                borderRadius: "8px",
+                textTransform: "none",
+                borderColor: "#E5E5E5",
+                color: "#1A1A2E",
+              }}
+            >
+              Log Out
+            </Button>
+            ):
+          (
+              <> 
+              <Button
+              component={Link}
+              to="/auth/login"
+              onClick={() => setIsMobileOpen(false)}
+              fullWidth
+              variant="outlined"
+              startIcon={<LoginIcon />}
+              sx={{
+                borderRadius: "8px",
+                textTransform: "none",
+                borderColor: "#E5E5E5",
+                color: "#1A1A2E",
+              }}
+            >
+              Log In
+            </Button>
+            <Button
+              component={Link}
+              to="/auth/register"
+              onClick={() => setIsMobileOpen(false)}
+              fullWidth
+              variant="contained"
+              startIcon={<PersonAddIcon />}
+              sx={{
+                borderRadius: "8px",
+                textTransform: "none",
+                backgroundColor: "var(--primary-color, #7C3AED)",
+                boxShadow: "none",
+              }}
+            >
+              Register
+            </Button>
+            </>
+            )
+            }
+          </Box>
         </Box>
       )}
     </AppBar>

@@ -20,9 +20,10 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
-
+import  useAuthStore  from "../../store/useAuthStore";
 export default function Login() {
   const navigate = useNavigate();
+  const setToken = useAuthStore((state) => state.setToken); // ✅ جلب الدالة هنا
   const [showPassword, setShowPassword] = useState(false);
   // const[serverError,setServerError]=useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "error" });
@@ -47,8 +48,8 @@ export default function Login() {
       const response = await loginUser(data);
       console.log("Login successful:", response);
       setSnackbar({ open: true, message: "Login successful!", severity: "success" });
-      localStorage.setItem("token", response.data?.accessToken);
-        navigate("/");
+      setToken(response.data?.accessToken);
+      navigate("/");
       
       return response;
     } catch (error) {

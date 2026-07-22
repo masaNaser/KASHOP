@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import CustomSnackbar from "../components/CustomSnackbar";
 import useCategories from "../hook/useCategories";
+import { Link } from "react-router-dom";
 export default function Categories() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const { data, isLoading, isError, error } = useCategories();
@@ -50,6 +51,10 @@ export default function Categories() {
           <Grid container={true} spacing={3} sx={{ padding: 2 }}>
             {data?.data.response.data.map((category) => (
               <Grid item={true} xs={6} sm={4} md={3} key={category.id}>
+                <Link
+                  to={`/products/category/${category.id}`}
+                  style={{ textDecoration: "none" }}
+                >
                 <Card
                   sx={{
                     display: "flex",
@@ -78,6 +83,7 @@ export default function Categories() {
                     {category.name}
                   </Typography>
                 </Card>
+                </Link>
               </Grid>
             ))}
           </Grid>
