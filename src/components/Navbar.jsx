@@ -11,6 +11,7 @@ import {
   MenuItem,
   Box,
   Divider,
+  Container
 } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import PersonIcon from "@mui/icons-material/Person";
@@ -90,6 +91,7 @@ export default function Navbar() {
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
+      <Container maxWidth="lg" disableGutters>
       <Toolbar
         sx={{
           height: 64,
@@ -250,7 +252,7 @@ export default function Navbar() {
           {isMobileOpen ? <CloseIcon /> : <MenuIcon />}
         </IconButton>
       </Toolbar>
-
+      </Container>
       {/* قائمة الـ 3 شحطات للموبايل (مكتملة بكافة الأيقونات) */}
       {isMobileOpen && (
         <Box

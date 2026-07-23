@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   CircularProgress,
   Box,
@@ -8,12 +9,23 @@ import {
   CardActions,
   Button,
   Grid,
-  Rating
+  Rating,
 } from "@mui/material";
 import useProducts from "../../hook/useProducts";
 import { Link } from "react-router-dom";
+import { addToCart } from "../../servicse/cart";
+import AddToCartDialog from "../../components/dialog/AddToCartDialog";
+import CustomSnackbar from "../../components/CustomSnackbar";
+
 export default function Product() {
   const { data, isLoading } = useProducts();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success", // إما 'success' أو 'error'
+  });
 
   if (isLoading) {
     return (
@@ -22,7 +34,43 @@ export default function Product() {
       </Box>
     );
   }
-
+  const handleOpenAddToCart = (e, product) => {
+    e.preventDefault(); // 👈 إيقاف الانتقال عبر الرابط
+    e.stopPropagation(); // 👈 منع وصول الحدث للرابط الأب
+    setSelectedProduct(product);
+    setOpenDialog(true);
+  };
+  const handleAddToCart = async ({ ProductId, Count }) => {
+    try {
+      const response = await addToCart({
+        ProductId,
+        Count,
+      });
+      console.log("add to cart", ProductId, Count);
+      console.log(response);
+      if (response.data?.success) {
+        setSnackbar({
+          open: true,
+          message: "Product added to cart successfully!",
+          severity: "success",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: response.data?.message || "Failed to add product",
+          severity: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || "Something went wrong!",
+        severity: "error",
+      });
+    }
+  };
+  console.log("openDialog", openDialog);
   const productsList = data?.data.response.data || [];
   console.log("Products List:", productsList);
   return (
@@ -35,14 +83,16 @@ export default function Product() {
                 to={`/ProductDetails/${product.id}`}
                 style={{ textDecoration: "none" }}
               >
-                <Card sx={{
-                   maxWidth: 345, 
-                   padding: 2 ,
-                   "&:hover":{
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                   }
-
-                }} key={product.id}>
+                <Card
+                  sx={{
+                    maxWidth: 345,
+                    padding: 2,
+                    "&:hover": {
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                    },
+                  }}
+                  key={product.id}
+                >
                   <CardMedia
                     component="img"
                     image={product.image}
@@ -50,22 +100,26 @@ export default function Product() {
                     sx={{
                       width: "100%",
                       height: 180,
-                      objectFit: "contain", // يعرض المنتج كاملاً بدون أي قص لأطرافه         
+                      objectFit: "contain", // يعرض المنتج كاملاً بدون أي قص لأطرافه
                       margin: "auto",
                       padding: "16px",
-                      transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+                      transition:
+                        "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
                       "&:hover": {
-                        transform: "scale(1.3)", 
-                        },
+                        transform: "scale(1.3)",
+                      },
                     }}
                   />
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="div"
-                     sx={{
-                       fontSize: "1.2rem", 
-                       fontWeight: "bold", 
-
-                      }}>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="div"
+                      sx={{
+                        fontSize: "1.2rem",
+                        fontWeight: "bold",
+                      }}
+                    >
                       {product.name}
                     </Typography>
                     <Box
@@ -91,37 +145,42 @@ export default function Product() {
                             alignItems: "center",
                           }}
                         >
-                      <Rating value={product.rate || 0} readOnly precision={0.5} size="small" />
+                          <Rating
+                            value={product.rate || 0}
+                            readOnly
+                            precision={0.5}
+                            size="small"
+                          />
                         </Typography>
                       )}
                       <Typography
                         variant="span"
-                        sx={{ 
+                        sx={{
                           color: "text.secondary",
                           fontWeight: "bold",
-
-
-                         }}
+                        }}
                       >
                         {product.price?.toFixed(2)}$
                       </Typography>
                     </Box>
                   </CardContent>
                   <CardActions>
-                    <Button size="small"
-                    sx={{
-                      backgroundColor: "var(--primary-color)",
-                      alignItems: "center",
-                      margin: "auto",
-                      padding: "8px 16px",
-                      color: "#fff",
-                      "&:hover": {
-                        backgroundColor: "var(--primary-color-dark)",
-                      },
-                    }}
+                    <Button
+                      size="small"
+                      sx={{
+                        backgroundColor: "var(--primary-color)",
+                        alignItems: "center",
+                        margin: "auto",
+                        padding: "8px 16px",
+                        color: "#fff",
+                        "&:hover": {
+                          backgroundColor: "var(--primary-color-dark)",
+                        },
+                      }}
+                      onClick={(e) => handleOpenAddToCart(e, product)}
                     >
                       add to cart
-                      </Button>
+                    </Button>
                   </CardActions>
                 </Card>
               </Link>
@@ -131,6 +190,18 @@ export default function Product() {
       ) : (
         <p>No products available.</p>
       )}
+      <AddToCartDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        product={selectedProduct}
+        onAddToCart={handleAddToCart}
+      />
+      <CustomSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+      />
     </Box>
   );
 }

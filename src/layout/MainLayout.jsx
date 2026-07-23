@@ -6,8 +6,9 @@ import { Container } from "@mui/material";
 export const MainLayout = () => {
   return (
     <>
-      <Container>
+      
         <Navbar />
+        <Container maxWidth="lg" sx={{ flexGrow: 1, py: 4 }}>
         <Outlet />
       </Container>
       <Footer />

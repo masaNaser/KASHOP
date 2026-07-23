@@ -8,6 +8,8 @@ import Categories from "../pages/Categories";
 import Product from "../pages/product/Product";
 import ProductDetails from "../pages/product/ProductDetails";
 import ProductByCategory from "../pages/product/ProductByCategory";
+import Cart from "../pages/Cart";
+import ProtectedRoute from "./ProtectedRoute";
 const router = createBrowserRouter([
     {
         
@@ -33,7 +35,14 @@ const router = createBrowserRouter([
         {
           path: "products/category/:categoryId",
           element: <ProductByCategory />
-        } 
+        } ,
+        {
+          path: "cart",
+          element: 
+          <ProtectedRoute>
+             <Cart /> 
+          </ProtectedRoute>
+        }
       
     ]
         
