@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '../servicse/product';
+import { getProducts } from '../services/product';
 
 
 export default function useProducts() {

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCategories } from '../servicse/category';
+import { getCategories } from '../services/category';
 export default function useCategories() {
   const query = useQuery({
     queryKey: ["categories"],

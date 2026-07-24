@@ -19,7 +19,6 @@ import PropTypes from 'prop-types';
 export default function AddToCartDialog({ open, onClose, product, onAddToCart }) {
   const [count, setCount] = useState(1);
   const [loading, setLoading] = useState(false);
-  
   if (!product) return null;
 
   const handleIncrease = () => setCount((prev) => prev + 1);

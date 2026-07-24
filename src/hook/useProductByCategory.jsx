@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getProductsByCategory } from '../servicse/product';    
+import { getProductsByCategory } from '../services/product';    
 export default function useProductByCategory(categoryId) {
     const query = useQuery({
         queryKey: ["productsByCategory", categoryId],

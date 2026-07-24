@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { loginUser } from "../../servicse/auth";
+import { loginUser } from "../../services/auth";
 import CustomSnackbar from "../../components/CustomSnackbar"; 
 import {
   Box,

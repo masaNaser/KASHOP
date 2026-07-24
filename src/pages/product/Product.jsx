@@ -13,14 +13,15 @@ import {
 } from "@mui/material";
 import useProducts from "../../hook/useProducts";
 import { Link } from "react-router-dom";
-import { addToCart } from "../../servicse/cart";
 import AddToCartDialog from "../../components/dialog/AddToCartDialog";
 import CustomSnackbar from "../../components/CustomSnackbar";
+import {useAddToCart} from "../../hook/useCart";
 
 export default function Product() {
   const { data, isLoading } = useProducts();
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const {mutateAsync:addToCart} = useAddToCart();
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -47,8 +48,8 @@ export default function Product() {
         Count,
       });
       console.log("add to cart", ProductId, Count);
-      console.log(response);
-      if (response.data?.success) {
+      console.log("cart response",response);
+      if (response?.data?.success) {
         setSnackbar({
           open: true,
           message: "Product added to cart successfully!",
@@ -57,7 +58,7 @@ export default function Product() {
       } else {
         setSnackbar({
           open: true,
-          message: response.data?.message || "Failed to add product",
+          message: response?.data?.message || "Failed to add product",
           severity: "error",
         });
       }
@@ -68,6 +69,7 @@ export default function Product() {
         message: error.response?.data?.message || "Something went wrong!",
         severity: "error",
       });
+      throw error;
     }
   };
   console.log("openDialog", openDialog);

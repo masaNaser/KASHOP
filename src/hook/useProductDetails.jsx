@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getProductDetails } from '../servicse/product';
+import { getProductDetails } from '../services/product';
 
 export default function useProductDetails(productId) { 
     const query = useQuery({
