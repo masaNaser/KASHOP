@@ -40,7 +40,7 @@ export default function Categories() {
           }}
         >
           <Typography
-            variant="h6"
+            variant="h5"
             sx={{ mt: 4, mb: 2, color: "var(--primary-color)" }}
           >
             Shop by Category

@@ -14,7 +14,7 @@ import {
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoginSchema } from "../../validations/LoginSchema";
 import EmailIcon from "@mui/icons-material/Email";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
   Visibility as VisibilityIcon,
@@ -129,12 +129,7 @@ const handleCloseSnackbar = (event, reason) => {
             placeholder="john@example.com"
             variant="outlined"
             size="small"
-            {...register("email", {
-              pattern: {
-                value: /^\S+@\S+$/i,
-                message: "Invalid email address",
-              },
-            })}
+            {...register("email")}
             error={!!errors.email}
             helperText={errors.email?.message}
             InputProps={{
@@ -211,10 +206,10 @@ const handleCloseSnackbar = (event, reason) => {
               fontSize: "0.95rem",
               mt: 1,
               boxShadow: "none",
-              backgroundColor: "var(--primary-color, #7C3AED)",
+              backgroundColor: "var(--primary-color)",
               color: "#ffffff", 
               "&:hover": {
-                backgroundColor: "var(--primary-color, #7C3AED)", 
+                backgroundColor: "var(--primary-color)", 
                 boxShadow: "none",
                 opacity: 0.9, 
               },
@@ -224,16 +219,16 @@ const handleCloseSnackbar = (event, reason) => {
           </Button>
         </Box>
 
-        {/* <Box sx={{ mt: 3, textAlign: "center" }}>
+         <Box sx={{ mt: 3, textAlign: "center" }}>
           <Typography
             variant="body2"
             sx={{ color: "#737373", fontSize: "0.75rem" }}
           >
-            Already have an account?{" "}
+            Dont have an account?{" "}
             <Link
-              to="/auth/login"
+              to="/auth/register"
               style={{
-                color: "var(--primary-color, #7C3AED)",
+                color: "var(--primary-color)",
                 fontWeight: 600,
                 textDecoration: "none",
               }}
@@ -242,10 +237,33 @@ const handleCloseSnackbar = (event, reason) => {
               }
               onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
             >
-              Login here
+              Register here
             </Link>
           </Typography>
-        </Box> */}
+        </Box> 
+        
+         <Box sx={{ mt: 3, textAlign: "center" }}>
+          <Typography
+            variant="body2"
+            sx={{ color: "#737373", fontSize: "0.75rem" }}
+          >
+            ForgetPassword?{" "}
+            <Link
+              to="/auth/sendCode"
+              style={{
+                color: "var(--primary-color)",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) =>
+                (e.target.style.textDecoration = "underline")
+              }
+              onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
+            >
+              Click here
+            </Link>
+          </Typography>
+        </Box> 
       </Box>
       <CustomSnackbar 
       open={snackbar.open}

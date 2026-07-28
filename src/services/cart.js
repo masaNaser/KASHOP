@@ -10,3 +10,18 @@ export const addToCart = async (productData) => {
   return response;
 };
 
+export const updateCartQuantity = async(productId,count)=>{
+  const response = await axiosInstanceWithToken.patch(`/Carts/${productId}`,{count});
+  return response;
+}
+
+export const removeFromCart = async(productId)=>{
+  const response = await axiosInstanceWithToken.delete(`/Carts/${productId}`);
+  return response;
+}
+
+export const clearCart = async()=>{
+  const response = await axiosInstanceWithToken.delete(`/Carts/clear`);
+  return response;
+}
+

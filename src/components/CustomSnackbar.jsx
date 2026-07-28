@@ -5,13 +5,13 @@ export default function CustomSnackbar({ open, message, severity = "error", onCl
   return (
     <Snackbar
       open={open}
-      autoHideDuration={5000} // يختفي بعد 5 ثوان تلقائياً
+      autoHideDuration={3000} // يختفي بعد 3 ثوان تلقائياً
       onClose={onClose}
-      anchorOrigin={{ vertical: "top", horizontal: "center" }} // يظهر أعلى المنتصف
+      anchorOrigin={{ vertical: "top", horizontal: "center" }} 
     >
       <Alert 
         onClose={onClose} 
-        severity={severity} // يمكن أن يكون: error, success, warning, info
+        severity={severity}
         variant="filled" 
         sx={{ width: "100%", borderRadius: "8px", fontWeight: 500 }}
       >

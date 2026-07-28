@@ -331,10 +331,10 @@ const handleCloseSnackbar = (event, reason) => {
               fontSize: "0.95rem",
               mt: 1,
               boxShadow: "none",
-              backgroundColor: "var(--primary-color, #7C3AED)",
+              backgroundColor: "var(--primary-color)",
               color: "#ffffff", 
               "&:hover": {
-                backgroundColor: "var(--primary-color, #7C3AED)", 
+                backgroundColor: "var(--primary-color)", 
                 boxShadow: "none",
                 opacity: 0.9, 
               },
@@ -353,7 +353,7 @@ const handleCloseSnackbar = (event, reason) => {
             <Link
               to="/auth/login"
               style={{
-                color: "var(--primary-color, #7C3AED)",
+                color: "var(--primary-color)",
                 fontWeight: 600,
                 textDecoration: "none",
               }}

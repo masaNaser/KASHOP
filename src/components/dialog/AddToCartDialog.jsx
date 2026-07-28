@@ -41,7 +41,7 @@ export default function AddToCartDialog({ open, onClose, product, onAddToCart })
   };
 
   const handleClose = () => {
-    setCount(1); // إرجاع العدّاد إلى 1 عند الإغلاق
+    setCount(1);
     onClose();
   };
 
@@ -58,7 +58,6 @@ export default function AddToCartDialog({ open, onClose, product, onAddToCart })
         },
       }}
     >
-      {/* عنوان الـ Dialog مع زر إغلاق */}
       <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
           Select Quantity
@@ -69,7 +68,6 @@ export default function AddToCartDialog({ open, onClose, product, onAddToCart })
       </DialogTitle>
 
       <DialogContent dividers sx={{ borderTop: '1px solid #F0F0F0', borderBottom: '1px solid #F0F0F0', py: 3 }}>
-        {/* تفاصيل المنتج المختصرة */}
         <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.5, color: '#1A1A2E' }}>
           {product.title || product.name}
         </Typography>
@@ -77,7 +75,6 @@ export default function AddToCartDialog({ open, onClose, product, onAddToCart })
           ${product.price}
         </Typography>
 
-        {/* أزرار التحكم بالكمية */}
         <Box
           sx={{
             display: 'flex',
@@ -116,7 +113,6 @@ export default function AddToCartDialog({ open, onClose, product, onAddToCart })
         </Box>
       </DialogContent>
 
-      {/* زر التأكيد والإضافة */}
       <DialogActions sx={{ p: 2 }}>
         <Button
           fullWidth

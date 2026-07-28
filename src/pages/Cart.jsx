@@ -16,21 +16,42 @@ import {
   Stack,
 } from "@mui/material";
 
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
+import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
 import { Link } from "react-router-dom";
-import { useGetCart } from "../hook/useCart";
+import {
+  useGetCart,
+  useUpdateCartQuantity,
+  useRemoveFromCart,
+  useClearCart,
+} from "../hook/useCart";
+import CheckoutModal from "../components/dialog/CheckoutModal";
+import { useState } from "react";
 
 export default function Cart() {
-
   const { data, isLoading } = useGetCart();
-  console.log("cart",data?.data.items);
+  const { mutate: updateQuantity } = useUpdateCartQuantity();
+  const { mutate: removeFromCart } = useRemoveFromCart();
+  const { mutate: clearCart } = useClearCart();
+  const [openCheckoutModal, setOpenCheckoutModal] = useState(false);
+  console.log("cart", data?.data.items);
+
+  const handleIncrement = (productId, currentCount) => {
+    updateQuantity({ productId, count: currentCount + 1 });
+  };
+
+  const handleDecrement = (productId, currentCount) => {
+    if (currentCount > 1) {
+      updateQuantity({ productId, count: currentCount - 1 });
+    }
+  };
+
   if (isLoading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
@@ -43,8 +64,17 @@ export default function Cart() {
   const cartTotal = data?.data.cartTotal || 0;
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, backgroundColor: "#F9FAFB", minHeight: "100vh" }}>
-      <Typography variant="h4" sx={{ fontWeight: 700, mb: 3, color: "#111827" }}>
+    <Box
+      sx={{
+        p: { xs: 2, md: 4 },
+        backgroundColor: "#F9FAFB",
+        minHeight: "100vh",
+      }}
+    >
+      <Typography
+        variant="h4"
+        sx={{ fontWeight: 700, mb: 3, color: "#111827" }}
+      >
         Shopping Cart
       </Typography>
 
@@ -70,10 +100,27 @@ export default function Cart() {
             <Table>
               <TableHead sx={{ backgroundColor: "#F3F4F6" }}>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 600, color: "#4B5563" }}>Product</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 600, color: "#4B5563" }}>Price</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 600, color: "#4B5563" }}>Quantity</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 600, color: "#4B5563" }}>Total</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: "#4B5563" }}>
+                    Product
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ fontWeight: 600, color: "#4B5563" }}
+                  >
+                    Price
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ fontWeight: 600, color: "#4B5563" }}
+                  >
+                    Quantity
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ fontWeight: 600, color: "#4B5563" }}
+                  >
+                    Total
+                  </TableCell>
                   <TableCell align="center" sx={{ width: "50px" }} />
                 </TableRow>
               </TableHead>
@@ -81,11 +128,13 @@ export default function Cart() {
               <TableBody>
                 {items.length > 0 ? (
                   items.map((item) => (
-                    <TableRow key={item.productId} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                    <TableRow key={item.productId}>
                       {/* تفاصيل المنتج */}
                       <TableCell component="th" scope="row">
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                          <Box
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                        >
+                          {/* <Box
                             sx={{
                               width: 64,
                               height: 64,
@@ -97,12 +146,14 @@ export default function Cart() {
                               overflow: "hidden",
                             }}
                           >
-                            {/* يمكن استبدال الصورة بعنصر img إن وُجد رابط الصورة */}
                             <Typography variant="caption" sx={{ color: "#FFF", fontSize: "10px" }}>
                               IMG
-                            </Typography>
+                            </Typography> 
                           </Box>
-                          <Typography sx={{ fontWeight: 600, color: "#111827" }}>
+                          */}
+                          <Typography
+                            sx={{ fontWeight: 600, color: "#111827" }}
+                          >
                             {item.productName}
                           </Typography>
                         </Box>
@@ -110,15 +161,28 @@ export default function Cart() {
 
                       {/* السعر الفردي */}
                       <TableCell align="center">
-                        <Typography sx={{ fontWeight: 600, color: "var(--primary-color)" }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            color: "var(--primary-color)",
+                          }}
+                        >
                           ${item.price?.toFixed(2)}
                         </Typography>
                       </TableCell>
 
                       {/* عداد الكمية */}
                       <TableCell align="center">
-                        <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          justifyContent="center"
+                          spacing={1}
+                        >
                           <IconButton
+                            onClick={() => {
+                              handleDecrement(item.productId, item.count);
+                            }}
                             size="small"
                             sx={{
                               border: "1px solid #E5E7EB",
@@ -126,12 +190,18 @@ export default function Cart() {
                               height: 28,
                             }}
                           >
-                            <RemoveIcon fontSize="small" sx={{ fontSize: 16 }} />
+                            <RemoveIcon
+                              fontSize="small"
+                              sx={{ fontSize: 16 }}
+                            />
                           </IconButton>
                           <Typography sx={{ fontWeight: 600, minWidth: 20 }}>
                             {item.count}
                           </Typography>
                           <IconButton
+                            onClick={() => {
+                              handleIncrement(item.productId, item.count);
+                            }}
                             size="small"
                             sx={{
                               border: "1px solid #E5E7EB",
@@ -146,14 +216,28 @@ export default function Cart() {
 
                       {/* السعر الإجمالي للمنتج */}
                       <TableCell align="center">
-                        <Typography sx={{ fontWeight: 700, color: "var(--primary-color)" }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            color: "var(--primary-color)",
+                          }}
+                        >
                           ${item.totalPrice?.toFixed(2)}
                         </Typography>
                       </TableCell>
 
                       {/* زر الحذف */}
                       <TableCell align="center">
-                        <IconButton size="small" sx={{ color: "#9CA3AF", "&:hover": { color: "#EF4444" } }}>
+                        <IconButton
+                          onClick={() => {
+                            removeFromCart(item.productId);
+                          }}
+                          size="small"
+                          sx={{
+                            color: "#9CA3AF",
+                            "&:hover": { color: "#EF4444" },
+                          }}
+                        >
                           <DeleteIcon />
                         </IconButton>
                       </TableCell>
@@ -162,7 +246,9 @@ export default function Cart() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
-                      <Typography color="text.secondary">Your cart is empty.</Typography>
+                      <Typography color="text.secondary">
+                        Your cart is empty.
+                      </Typography>
                     </TableCell>
                   </TableRow>
                 )}
@@ -183,16 +269,24 @@ export default function Cart() {
                 component={Link}
                 to="/"
                 startIcon={<ArrowBackIcon />}
-                sx={{ color: "var(--primary-color)", textTransform: "none", fontWeight: 600 }}
+                sx={{
+                  color: "var(--primary-color)",
+                  textTransform: "none",
+                  fontWeight: 600,
+                }}
               >
                 Continue Shopping
               </Button>
               <Button
-                // onClick={fetchCart}
-                startIcon={<RefreshIcon />}
-                sx={{ color: "#6B7280", textTransform: "none", fontWeight: 600 }}
+                onClick={clearCart}
+                startIcon={<RemoveShoppingCartIcon />}
+                sx={{
+                  color: "#6B7280",
+                  textTransform: "none",
+                  fontWeight: 600,
+                }}
               >
-                Update Cart
+                Clear Cart
               </Button>
             </Box>
           </TableContainer>
@@ -208,7 +302,10 @@ export default function Cart() {
               border: "1px solid #E5E7EB",
             }}
           >
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: "#111827" }}>
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 700, mb: 3, color: "#111827" }}
+            >
               Order Summary
             </Typography>
 
@@ -221,7 +318,9 @@ export default function Cart() {
               </Box>
 
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography color="text.secondary">Estimated Shipping</Typography>
+                <Typography color="text.secondary">
+                  Estimated Shipping
+                </Typography>
                 <Typography sx={{ fontWeight: 600, color: "#10B981" }}>
                   Free
                 </Typography>
@@ -237,22 +336,37 @@ export default function Cart() {
 
             <Divider sx={{ my: 2 }} />
 
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", mb: 0.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "baseline",
+                mb: 0.5,
+              }}
+            >
               <Typography variant="h6" sx={{ fontWeight: 700 }}>
                 Total
               </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 800, color: "var(--primary-color)" }}>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: 800, color: "var(--primary-color)" }}
+              >
                 ${cartTotal.toFixed(2)}
               </Typography>
             </Box>
 
-            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 3 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: "block", mb: 3 }}
+            >
               Taxes calculated at checkout
             </Typography>
 
             <Button
               fullWidth
               variant="contained"
+              onClick={() => setOpenCheckoutModal(true)}
               endIcon={<ArrowForwardIcon />}
               sx={{
                 backgroundColor: "#312E81",
@@ -268,7 +382,12 @@ export default function Cart() {
               Proceed to Checkout
             </Button>
 
-            <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+              spacing={1}
+            >
               <LockOutlinedIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />
               <Typography variant="caption" color="text.secondary">
                 Secure encrypted checkout
@@ -278,7 +397,15 @@ export default function Cart() {
             <Divider sx={{ my: 3 }} />
 
             {/* إدخال كود الخصم (Promotional Code) */}
-            <Typography variant="caption" sx={{ fontWeight: 600, color: "#6B7280", mb: 1, display: "block" }}>
+            <Typography
+              variant="caption"
+              sx={{
+                fontWeight: 600,
+                color: "#6B7280",
+                mb: 1,
+                display: "block",
+              }}
+            >
               PROMOTIONAL CODE
             </Typography>
             <Box sx={{ display: "flex", gap: 1 }}>
@@ -322,13 +449,28 @@ export default function Cart() {
             }}
           >
             <Box sx={{ pr: 1 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#312E81", mb: 0.5 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 700, color: "#312E81", mb: 0.5 }}
+              >
                 Member Rewards
               </Typography>
-              <Typography variant="caption" sx={{ color: "#4F46E5", display: "block", mb: 1, lineHeight: 1.4 }}>
-                You are earning points on this order. Use them for future discounts.
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "#4F46E5",
+                  display: "block",
+                  mb: 1,
+                  lineHeight: 1.4,
+                }}
+              >
+                You are earning points on this order. Use them for future
+                discounts.
               </Typography>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: "#312E81", cursor: "pointer" }}>
+              <Typography
+                variant="caption"
+                sx={{ fontWeight: 700, color: "#312E81", cursor: "pointer" }}
+              >
                 Learn more &gt;
               </Typography>
             </Box>
@@ -336,6 +478,10 @@ export default function Cart() {
           </Paper>
         </Box>
       </Box>
+      <CheckoutModal
+        open={openCheckoutModal}
+        onClose={() => setOpenCheckoutModal(false)}
+      />
     </Box>
   );
 }

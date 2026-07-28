@@ -11,7 +11,7 @@ import {
   MenuItem,
   Box,
   Divider,
-  Container
+  Container,
 } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import PersonIcon from "@mui/icons-material/Person";
@@ -25,7 +25,7 @@ import {
   PersonAdd as PersonAddIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import useAuthStore from "../store/useAuthStore"; 
+import useAuthStore from "../store/useAuthStore";
 const SearchWrapper = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: "50px",
@@ -68,7 +68,7 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const token = useAuthStore((state) => state.token); // جلب قيمة التوكن من الـ zustand store
-  console.log("Token in Navbar:", token); 
+  console.log("Token in Navbar:", token);
   const logout = useAuthStore((state) => state.logout); // جلب دالة تسجيل الخروج من الـ zustand store
   const location = useLocation();
 
@@ -92,166 +92,182 @@ export default function Navbar() {
       }}
     >
       <Container maxWidth="lg" disableGutters>
-      <Toolbar
-        sx={{
-          height: 64,
-          maxWidth: "1280px",
-          width: "100%",
-          mx: "auto",
-          px: { xs: 2, sm: 3, md: 4 },
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        {/* اللوجو KASHOP */}
-        <Typography
-          variant="h6"
-          component={Link}
-          to="/"
+        <Toolbar
           sx={{
-            fontWeight: 700,
-            color: "var(--primary-color, #7C3AED)",
-            fontSize: { xs: "1.25rem", sm: "1.5rem" },
-            textDecoration: "none",
-          }}
-        >
-          KASHOP
-        </Typography>
-
-        {/* روابط الشاشات الكبيرة */}
-        <Box
-          sx={{
-            display: { xs: "none", md: "flex" },
+            height: 64,
+            maxWidth: "1280px",
+            width: "100%",
+            mx: "auto",
+            px: { xs: 2, sm: 3, md: 4 },
+            display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            gap: { md: 2, lg: 4 },
-            height: "100%",
           }}
         >
-          {navLinks.map((link) => {
-            const isActive = location.pathname === link.path;
-            return (
-              <Button
-                key={link.name}
-                component={Link}
-                to={link.path}
-                disableRipple
-                sx={{
-                  position: "relative",
-                  height: "64px",
-                  borderRadius: 0,
-                  textTransform: "none",
-                  fontSize: "0.875rem",
-                  fontWeight: 500,
-                  color: isActive ? "var(--primary-color, #7C3AED)" : "#525252",
-                  "&:hover": {
-                    color: "var(--primary-color, #7C3AED)",
-                    backgroundColor: "transparent",
-                  },
-                  "&::after": isActive
-                    ? {
-                        content: '""',
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        height: "3px",
-                        width: "100%",
-                        borderRadius: "9999px",
-                        backgroundColor: "var(--primary-color, #7C3AED)",
-                      }
-                    : {},
-                }}
-              >
-                {link.name}
-              </Button>
-            );
-          })}
-        </Box>
-
-        {/* عناصر جهة اليمين في الشاشات الكبيرة */}
-        <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1.5 }}>
-          <SearchWrapper>
-            <SearchIconWrapper>
-              <SearchIcon sx={{ fontSize: 20 }} />
-            </SearchIconWrapper>
-            <StyledInputBase placeholder="Search..." />
-          </SearchWrapper>
-
-          <IconButton sx={{ color: "#1A1A2E" }}>
-            <LanguageIcon sx={{ fontSize: 22 }} />
-          </IconButton>
-
-          <IconButton onClick={handleProfileMenuOpen} sx={{ color: "#1A1A2E" }}>
-            <PersonIcon sx={{ fontSize: 24 }} />
-          </IconButton>
-
-          <Menu
-            anchorEl={anchorEl}
-            open={isMenuOpen}
-            onClose={handleMenuClose}
-            onClick={handleMenuClose}
-            transformOrigin={{ horizontal: "right", vertical: "top" }}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                width: 192,
-                borderRadius: "12px",
-                mt: 1,
-                border: "1px solid #F5F5F5",
-                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)",
-                "& .MuiMenuItem-root": {
-                  fontSize: "0.875rem",
-                  borderRadius: "8px",
-                  color: "#525252",
-                  gap: 1.5,
-                  padding: "8px 12px",
-                  "&:hover": {
-                    color: "var(--primary-color, #7C3AED)",
-                    backgroundColor: "#F3F1FF",
-                  },
-                },
-              },
+          {/* اللوجو KASHOP */}
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{
+              fontWeight: 700,
+              color: "var(--primary-color, #7C3AED)",
+              fontSize: { xs: "1.25rem", sm: "1.5rem" },
+              textDecoration: "none",
             }}
           >
-            {token ?(
-            <MenuItem component={Link} to="/auth/login" onClick={logout}>
-              <LogoutIcon sx={{ fontSize: 18 }} />
-              Log out
-            </MenuItem>
-          ):(
-            <>
-          <MenuItem component={Link} to="/auth/login">
-              <LoginIcon sx={{ fontSize: 18 }} />
-              Log In
-            </MenuItem>
-            <MenuItem component={Link} to="/auth/register">
-              <PersonAddIcon sx={{ fontSize: 18 }} />
-              Register
-            </MenuItem>
-            </>
-          )}
-          </Menu>
+            KASHOP
+          </Typography>
 
-          {token && (
-         <IconButton sx={{ color: "#1A1A2E" }} component={Link} to="/cart">
-            <ShoppingCartOutlinedIcon sx={{ fontSize: 22 }} />
+          {/* روابط الشاشات الكبيرة */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              alignItems: "center",
+              gap: { md: 2, lg: 4 },
+              height: "100%",
+            }}
+          >
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path;
+              return (
+                <Button
+                  key={link.name}
+                  component={Link}
+                  to={link.path}
+                  disableRipple
+                  sx={{
+                    position: "relative",
+                    height: "64px",
+                    borderRadius: 0,
+                    textTransform: "none",
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                    color: isActive
+                      ? "var(--primary-color, #7C3AED)"
+                      : "#525252",
+                    "&:hover": {
+                      color: "var(--primary-color, #7C3AED)",
+                      backgroundColor: "transparent",
+                    },
+                    "&::after": isActive
+                      ? {
+                          content: '""',
+                          position: "absolute",
+                          bottom: 0,
+                          left: 0,
+                          height: "3px",
+                          width: "100%",
+                          borderRadius: "9999px",
+                          backgroundColor: "var(--primary-color, #7C3AED)",
+                        }
+                      : {},
+                  }}
+                >
+                  {link.name}
+                </Button>
+              );
+            })}
+          </Box>
+
+          {/* عناصر جهة اليمين في الشاشات الكبيرة */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              alignItems: "center",
+              gap: 1.5,
+            }}
+          >
+            <SearchWrapper>
+              <SearchIconWrapper>
+                <SearchIcon sx={{ fontSize: 20 }} />
+              </SearchIconWrapper>
+              <StyledInputBase placeholder="Search..." />
+            </SearchWrapper>
+
+            <IconButton sx={{ color: "#1A1A2E" }}>
+              <LanguageIcon sx={{ fontSize: 22 }} />
+            </IconButton>
+
+            <IconButton
+              onClick={handleProfileMenuOpen}
+              sx={{ color: "#1A1A2E" }}
+            >
+              <PersonIcon sx={{ fontSize: 24 }} />
+            </IconButton>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={isMenuOpen}
+              onClose={handleMenuClose}
+              onClick={handleMenuClose}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  width: 192,
+                  borderRadius: "12px",
+                  mt: 1,
+                  border: "1px solid #F5F5F5",
+                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)",
+                  "& .MuiMenuItem-root": {
+                    fontSize: "0.875rem",
+                    borderRadius: "8px",
+                    color: "#525252",
+                    gap: 1.5,
+                    padding: "8px 12px",
+                    "&:hover": {
+                      color: "var(--primary-color, #7C3AED)",
+                      backgroundColor: "#F3F1FF",
+                    },
+                  },
+                },
+              }}
+            >
+              {token ? (
+                <>
+                  <MenuItem component={Link} to="/profile">
+                    <PersonAddIcon sx={{ fontSize: 18 }} />
+                    My Profile
+                  </MenuItem>
+                  <MenuItem component={Link} to="/auth/login" onClick={logout}>
+                    <LogoutIcon sx={{ fontSize: 18 }} />
+                    Log out
+                  </MenuItem>
+                </>
+              ) : (
+                <>
+                  <MenuItem component={Link} to="/auth/login">
+                    <LoginIcon sx={{ fontSize: 18 }} />
+                    Log In
+                  </MenuItem>
+                  <MenuItem component={Link} to="/auth/register">
+                    <PersonAddIcon sx={{ fontSize: 18 }} />
+                    Register
+                  </MenuItem>
+                </>
+              )}
+            </Menu>
+
+            {token && (
+              <IconButton sx={{ color: "#1A1A2E" }} component={Link} to="/cart">
+                <ShoppingCartOutlinedIcon sx={{ fontSize: 22 }} />
+              </IconButton>
+            )}
+          </Box>
+
+          {/* زر الـ 3 شحطات في الموبايل فقط */}
+          <IconButton
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            sx={{
+              display: { xs: "flex", md: "none" },
+              color: "#1A1A2E",
+            }}
+          >
+            {isMobileOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
-          )}
-          
-        </Box>
-
-        {/* زر الـ 3 شحطات في الموبايل فقط */}
-        <IconButton
-          onClick={() => setIsMobileOpen(!isMobileOpen)}
-          sx={{
-            display: { xs: "flex", md: "none" },
-            color: "#1A1A2E",
-          }}
-        >
-          {isMobileOpen ? <CloseIcon /> : <MenuIcon />}
-        </IconButton>
-      </Toolbar>
+        </Toolbar>
       </Container>
       {/* قائمة الـ 3 شحطات للموبايل (مكتملة بكافة الأيقونات) */}
       {isMobileOpen && (
@@ -298,7 +314,9 @@ export default function Navbar() {
                     py: 1,
                     px: 1.5,
                     borderRadius: "8px",
-                    color: isActive ? "var(--primary-color, #7C3AED)" : "#525252",
+                    color: isActive
+                      ? "var(--primary-color, #7C3AED)"
+                      : "#525252",
                     backgroundColor: isActive ? "#F3F1FF" : "transparent",
                   }}
                 >
@@ -312,33 +330,33 @@ export default function Navbar() {
 
           {/* 3. عناصر الخدمات والأيقونات (السلة، اللغة، البروفايل) */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            
             {/* أيقونة السلة مع الـ  */}
-            {token &&(
-            <Box
-              component={Link}
-              to="/cart" // أو مسار صفحة السلة لديك
-              onClick={() => setIsMobileOpen(false)}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                p: 1.2,
-                borderRadius: "8px",
-                textDecoration: "none",
-                color: "#525252",
-                "&:hover": { backgroundColor: "#F8F9FC" },
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                <ShoppingCartOutlinedIcon sx={{ fontSize: 22, color: "#1A1A2E" }} />
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  Cart
-                </Typography>
+            {token && (
+              <Box
+                component={Link}
+                to="/cart" // أو مسار صفحة السلة لديك
+                onClick={() => setIsMobileOpen(false)}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  p: 1.2,
+                  borderRadius: "8px",
+                  textDecoration: "none",
+                  color: "#525252",
+                  "&:hover": { backgroundColor: "#F8F9FC" },
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                  <ShoppingCartOutlinedIcon
+                    sx={{ fontSize: 22, color: "#1A1A2E" }}
+                  />
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    Cart
+                  </Typography>
+                </Box>
               </Box>
-          
-            </Box>
-              )}
+            )}
             {/* أيقونة اللغة */}
             <Box
               sx={{
@@ -363,66 +381,82 @@ export default function Navbar() {
 
           {/* 4. أزرار تسجيل الدخول وإنشاء الحساب */}
           <Box sx={{ display: "flex", gap: 1.5 }}>
-            {
-            token?
-            (
-              <Button
-              component={Link}
-              to="/auth/login"
-              onClick={() => {
-                logout();
-                setIsMobileOpen(false);
-              }}
-              fullWidth
-              variant="outlined"
-              startIcon={<LogoutIcon />}
-              sx={{
-                borderRadius: "8px",
-                textTransform: "none",
-                borderColor: "#E5E5E5",
-                color: "#1A1A2E",
-              }}
-            >
-              Log Out
-            </Button>
-            ):
-          (
-              <> 
-              <Button
-              component={Link}
-              to="/auth/login"
-              onClick={() => setIsMobileOpen(false)}
-              fullWidth
-              variant="outlined"
-              startIcon={<LoginIcon />}
-              sx={{
-                borderRadius: "8px",
-                textTransform: "none",
-                borderColor: "#E5E5E5",
-                color: "#1A1A2E",
-              }}
-            >
-              Log In
-            </Button>
-            <Button
-              component={Link}
-              to="/auth/register"
-              onClick={() => setIsMobileOpen(false)}
-              fullWidth
-              variant="contained"
-              startIcon={<PersonAddIcon />}
-              sx={{
-                borderRadius: "8px",
-                textTransform: "none",
-                backgroundColor: "var(--primary-color, #7C3AED)",
-                boxShadow: "none",
-              }}
-            >
-              Register
-            </Button>
-            </>
-            )
-            }
+            {token ? (
+              <>
+                <Button
+                  component={Link}
+                  to="/profile"
+                  onClick={() => {
+                    setIsMobileOpen(false);
+                  }}
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<PersonAddIcon />}
+                  sx={{
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    borderColor: "#E5E5E5",
+                    color: "#1A1A2E",
+                  }}
+                >
+                  My Profile
+                </Button>
+                <Button
+                  component={Link}
+                  to="/auth/login"
+                  onClick={() => {
+                    logout();
+                    setIsMobileOpen(false);
+                  }}
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<LogoutIcon />}
+                  sx={{
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    borderColor: "#E5E5E5",
+                    color: "#1A1A2E",
+                  }}
+                >
+                  Log Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={Link}
+                  to="/auth/login"
+                  onClick={() => setIsMobileOpen(false)}
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<LoginIcon />}
+                  sx={{
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    borderColor: "#E5E5E5",
+                    color: "#1A1A2E",
+                  }}
+                >
+                  Log In
+                </Button>
+                <Button
+                  component={Link}
+                  to="/auth/register"
+                  onClick={() => setIsMobileOpen(false)}
+                  fullWidth
+                  variant="contained"
+                  startIcon={<PersonAddIcon />}
+                  sx={{
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    backgroundColor: "var(--primary-color, #7C3AED)",
+                    boxShadow: "none",
+                  }}
+                >
+                  Register
+                </Button>
+              </>
+            )}
           </Box>
         </Box>
       )}

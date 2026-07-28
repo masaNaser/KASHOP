@@ -10,6 +10,9 @@ import ProductDetails from "../pages/product/ProductDetails";
 import ProductByCategory from "../pages/product/ProductByCategory";
 import Cart from "../pages/Cart";
 import ProtectedRoute from "./ProtectedRoute";
+import SendCode from "../pages/auth/SendCode";
+import ResetPassword from "../pages/auth/ResetPassword";
+import Profile from "../pages/Profile";
 const router = createBrowserRouter([
     {
         
@@ -42,6 +45,10 @@ const router = createBrowserRouter([
           <ProtectedRoute>
              <Cart /> 
           </ProtectedRoute>
+        },
+        {
+          path:"profile",
+          element: <Profile />
         }
       
     ]
@@ -58,6 +65,14 @@ const router = createBrowserRouter([
       {
         path: "register",   
         element: <Register />
+      },
+      {
+        path:"sendCode",
+        element: <SendCode />
+      },
+      {
+        path:"resetPassword",
+        element: <ResetPassword/>
       }
     ]
   }

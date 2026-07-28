@@ -15,13 +15,13 @@ import useProducts from "../../hook/useProducts";
 import { Link } from "react-router-dom";
 import AddToCartDialog from "../../components/dialog/AddToCartDialog";
 import CustomSnackbar from "../../components/CustomSnackbar";
-import {useAddToCart} from "../../hook/useCart";
+import { useAddToCart } from "../../hook/useCart";
 
 export default function Product() {
   const { data, isLoading } = useProducts();
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const {mutateAsync:addToCart} = useAddToCart();
+  const { mutateAsync: addToCart } = useAddToCart();
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -48,7 +48,7 @@ export default function Product() {
         Count,
       });
       console.log("add to cart", ProductId, Count);
-      console.log("cart response",response);
+      console.log("cart response", response);
       if (response?.data?.success) {
         setSnackbar({
           open: true,
@@ -77,6 +77,22 @@ export default function Product() {
   console.log("Products List:", productsList);
   return (
     <Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        <Typography
+          variant="h5"
+          sx={{ mt: 4, mb: 2, color: "var(--primary-color)" }}
+        >
+          Our Product
+        </Typography>
+        <Button>View All</Button>
+      </Box>
       {productsList && productsList.length > 0 ? (
         <Grid container spacing={3} sx={{ padding: 2 }}>
           {productsList.map((product) => (
