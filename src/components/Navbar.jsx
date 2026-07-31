@@ -17,7 +17,6 @@ import { styled, alpha } from "@mui/material/styles";
 import PersonIcon from "@mui/icons-material/Person";
 import {
   Search as SearchIcon,
-  Language as LanguageIcon,
   ShoppingCartOutlined as ShoppingCartOutlinedIcon,
   Menu as MenuIcon,
   Close as CloseIcon,
@@ -26,6 +25,8 @@ import {
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import useAuthStore from "../store/useAuthStore";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18Next";
 const SearchWrapper = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: "50px",
@@ -50,6 +51,8 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   color: "#A3A3A3",
+  right: theme.direction === "rtl" ? 0 : "auto",
+  left: theme.direction === "rtl" ? "auto" : 0,
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -71,11 +74,16 @@ export default function Navbar() {
   console.log("Token in Navbar:", token);
   const logout = useAuthStore((state) => state.logout); // جلب دالة تسجيل الخروج من الـ zustand store
   const location = useLocation();
-
+  const { t } = useTranslation();
+  const changeLanguage = (lng) => {
+    console.log(lng);
+    const newLang = i18n.language === "ar" ? "en" : "ar";
+    i18n.changeLanguage(newLang);
+  };
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Categories", path: "/categories" },
-    { name: "All Products", path: "/all-products" },
+    { name: t("Home"), path: "/" },
+    { name: t("Categories"), path: "/categories" },
+    { name: t("All Products"), path: "/all-products" },
   ];
 
   const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
@@ -116,9 +124,8 @@ export default function Navbar() {
               textDecoration: "none",
             }}
           >
-            KASHOP
+            {t("KASHOP")}
           </Typography>
-
           {/* روابط الشاشات الكبيرة */}
           <Box
             sx={{
@@ -143,11 +150,9 @@ export default function Navbar() {
                     textTransform: "none",
                     fontSize: "0.875rem",
                     fontWeight: 500,
-                    color: isActive
-                      ? "var(--primary-color, #7C3AED)"
-                      : "#525252",
+                    color: isActive ? "var(--primary-color)" : "#525252",
                     "&:hover": {
-                      color: "var(--primary-color, #7C3AED)",
+                      color: "var(--primary-color)",
                       backgroundColor: "transparent",
                     },
                     "&::after": isActive
@@ -159,7 +164,7 @@ export default function Navbar() {
                           height: "3px",
                           width: "100%",
                           borderRadius: "9999px",
-                          backgroundColor: "var(--primary-color, #7C3AED)",
+                          backgroundColor: "var(--primary-color)",
                         }
                       : {},
                   }}
@@ -182,12 +187,17 @@ export default function Navbar() {
               <SearchIconWrapper>
                 <SearchIcon sx={{ fontSize: 20 }} />
               </SearchIconWrapper>
-              <StyledInputBase placeholder="Search..." />
+              <StyledInputBase placeholder={t("Search...")} />
             </SearchWrapper>
 
-            <IconButton sx={{ color: "#1A1A2E" }}>
-              <LanguageIcon sx={{ fontSize: 22 }} />
-            </IconButton>
+            <Button
+              onClick={changeLanguage}
+              // startIcon={<LanguageIcon sx={{ fontSize: 22, color: "#1A1A2E" }}/>}
+              color="inherit"
+              sx={{ fontWeight: "bold", color: "#1A1A2E" }}
+            >
+              {i18n.language === "ar" ? "EN" : "العربية"}
+            </Button>
 
             <IconButton
               onClick={handleProfileMenuOpen}
@@ -218,7 +228,7 @@ export default function Navbar() {
                     gap: 1.5,
                     padding: "8px 12px",
                     "&:hover": {
-                      color: "var(--primary-color, #7C3AED)",
+                      color: "var(--primary-color)",
                       backgroundColor: "#F3F1FF",
                     },
                   },
@@ -229,22 +239,22 @@ export default function Navbar() {
                 <>
                   <MenuItem component={Link} to="/profile">
                     <PersonAddIcon sx={{ fontSize: 18 }} />
-                    My Profile
+                    {t("My Profile")}
                   </MenuItem>
                   <MenuItem component={Link} to="/auth/login" onClick={logout}>
                     <LogoutIcon sx={{ fontSize: 18 }} />
-                    Log out
+                    {t("Log out")}
                   </MenuItem>
                 </>
               ) : (
                 <>
                   <MenuItem component={Link} to="/auth/login">
                     <LoginIcon sx={{ fontSize: 18 }} />
-                    Log In
+                    {t("Log in")}
                   </MenuItem>
                   <MenuItem component={Link} to="/auth/register">
                     <PersonAddIcon sx={{ fontSize: 18 }} />
-                    Register
+                    {t("Register")}
                   </MenuItem>
                 </>
               )}
@@ -294,7 +304,7 @@ export default function Navbar() {
             <SearchIconWrapper>
               <SearchIcon sx={{ fontSize: 20 }} />
             </SearchIconWrapper>
-            <StyledInputBase placeholder="Search..." />
+            <StyledInputBase placeholder={t("Search...")} />
           </SearchWrapper>
 
           {/* 2. روابط الصفحات */}
@@ -314,9 +324,7 @@ export default function Navbar() {
                     py: 1,
                     px: 1.5,
                     borderRadius: "8px",
-                    color: isActive
-                      ? "var(--primary-color, #7C3AED)"
-                      : "#525252",
+                    color: isActive ? "var(--primary-color)" : "#525252",
                     backgroundColor: isActive ? "#F3F1FF" : "transparent",
                   }}
                 >
@@ -352,7 +360,7 @@ export default function Navbar() {
                     sx={{ fontSize: 22, color: "#1A1A2E" }}
                   />
                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    Cart
+                    {t("Cart")}
                   </Typography>
                 </Box>
               </Box>
@@ -370,10 +378,14 @@ export default function Navbar() {
                 "&:hover": { backgroundColor: "#F8F9FC" },
               }}
             >
-              <LanguageIcon sx={{ fontSize: 22, color: "#1A1A2E" }} />
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                Language (EN)
-              </Typography>
+              <Button
+                onClick={changeLanguage}
+                // startIcon={<LanguageIcon sx={{ fontSize: 22, color: "#1A1A2E" }}/>}
+                color="inherit"
+                sx={{ fontWeight: "bold" }}
+              >
+                {i18n.language === "ar" ? "EN" : "العربية"}
+              </Button>
             </Box>
           </Box>
 
@@ -399,7 +411,7 @@ export default function Navbar() {
                     color: "#1A1A2E",
                   }}
                 >
-                  My Profile
+                  {t("My Profile")}
                 </Button>
                 <Button
                   component={Link}
@@ -418,7 +430,7 @@ export default function Navbar() {
                     color: "#1A1A2E",
                   }}
                 >
-                  Log Out
+                  {t("Log Out")}
                 </Button>
               </>
             ) : (
@@ -437,7 +449,7 @@ export default function Navbar() {
                     color: "#1A1A2E",
                   }}
                 >
-                  Log In
+                  {t("Log In")}
                 </Button>
                 <Button
                   component={Link}
@@ -449,11 +461,11 @@ export default function Navbar() {
                   sx={{
                     borderRadius: "8px",
                     textTransform: "none",
-                    backgroundColor: "var(--primary-color, #7C3AED)",
+                    backgroundColor: "var(--primary-color)",
                     boxShadow: "none",
                   }}
                 >
-                  Register
+                  {t("Register")}
                 </Button>
               </>
             )}
