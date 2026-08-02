@@ -9,59 +9,66 @@ import {
   Button,
   InputAdornment,
   IconButton,
-   CircularProgress,
+  CircularProgress,
 } from "@mui/material";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoginSchema } from "../../validations/LoginSchema";
 import EmailIcon from "@mui/icons-material/Email";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
-import  useAuthStore  from "../../store/useAuthStore";
+import useAuthStore from "../../store/useAuthStore";
+import useThemeStore from "../../store/useThemeStore"; // 👈 استيراد الـ Theme Store
+
 export default function Login() {
   const navigate = useNavigate();
-  const setToken = useAuthStore((state) => state.setToken); // ✅ جلب الدالة هنا
+  const setToken = useAuthStore((state) => state.setToken);
+  
+  const mode = useThemeStore((state) => state.theme); // 👈 جلب قيمة الـ theme
+  const isDark = mode === "dark"; // 👈 متغير فحص للـ Dark Mode
+
   const [showPassword, setShowPassword] = useState(false);
-  // const[serverError,setServerError]=useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "error" });
+
   const {
     register,
     handleSubmit,
-    // eslint-disable-next-line no-unused-vars
-    getValues,
-    formState: { errors ,isSubmitting},
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
-    resolver:yupResolver(LoginSchema), 
+    resolver: yupResolver(LoginSchema), 
   });
 
   const onSubmit = async (data) => {
     try {
-      // setServerError(null);
       setSnackbar({ open: false, message: "", severity: "error" });
       const response = await loginUser(data);
       console.log("Login successful:", response);
       setSnackbar({ open: true, message: "Login successful!", severity: "success" });
       setToken(response.data?.accessToken);
       navigate("/");
-      
       return response;
     } catch (error) {
       console.error("Login failed:", error);
-      const errorMessage = error.response?.data?.message || error.response?.data?.errors || "Login failed. Please try again.";      setSnackbar({ open: true, message: errorMessage, severity: "error" });
-      // setServerError(errorMessage);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.errors ||
+        "Login failed. Please try again.";
+      setSnackbar({ open: true, message: errorMessage, severity: "error" });
     }
   };
-const handleCloseSnackbar = (event, reason) => {
-  if (reason === 'clickaway') return;
-  setSnackbar({ ...snackbar, open: false });
-};
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <Box
       sx={{
@@ -69,30 +76,41 @@ const handleCloseSnackbar = (event, reason) => {
         minHeight: "calc(100vh - 64px)",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#F8F9FC",
+        justify: "center",
+        // 👈 خلفية الصفحة تتغير حسب الـ theme
+        backgroundColor: isDark ? "#121212" : "#F8F9FC",
+        color: isDark ? "#ffffff" : "#000000",
         p: 2,
         py: 6,
+        transition: "background-color 0.3s ease",
       }}
     >
       <Box sx={{ textAlign: "center", mb: 4 }}>
         <Typography
           variant="body2"
-          sx={{ color: "var(--secondary-color)", mt: 0.5, fontSize: "0.75rem" }}
+          sx={{
+            color: isDark ? "#aaaaaa" : "var(--secondary-color)",
+            mt: 0.5,
+            fontSize: "0.75rem",
+          }}
         >
           Join our curated premium marketplace.
         </Typography>
       </Box>
 
+      {/* Card Container */}
       <Box
         sx={{
           width: "100%",
           maxWidth: 450,
           borderRadius: "16px",
-          border: "1px solid #F5F5F5",
-          backgroundColor: "white",
+          // 👈 ألوان الـ Form Card
+          border: isDark ? "1px solid #2e2e2e" : "1px solid #F5F5F5",
+          backgroundColor: isDark ? "#1e1e1e" : "#ffffff",
           p: 4,
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.02)",
+          boxShadow: isDark
+            ? "0px 4px 20px rgba(0, 0, 0, 0.4)"
+            : "0px 4px 12px rgba(0, 0, 0, 0.02)",
         }}
       >
         <Typography
@@ -100,7 +118,7 @@ const handleCloseSnackbar = (event, reason) => {
           component="h2"
           sx={{
             fontWeight: 700,
-            color: "#1A1A2E",
+            color: isDark ? "#ffffff" : "#1A1A2E",
             textAlign: "center",
             mb: 3,
             fontSize: "1.25rem",
@@ -115,13 +133,7 @@ const handleCloseSnackbar = (event, reason) => {
           noValidate
           sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
         >
-          {/* {serverError?.length>0? (
-            <Typography variant="body2" sx={{ color: "error.main", mt: 1 }}>
-              {serverError}
-            </Typography>
-          ):''} */}
-        
-
+          {/* Email Input */}
           <TextField
             fullWidth
             type="email"
@@ -135,7 +147,7 @@ const handleCloseSnackbar = (event, reason) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <EmailIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <EmailIcon sx={{ color: isDark ? "#888888" : "#A3A3A3", fontSize: 20 }} />
                 </InputAdornment>
               ),
             }}
@@ -143,29 +155,35 @@ const handleCloseSnackbar = (event, reason) => {
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
                 height: 44,
-                backgroundColor: "white",
+                backgroundColor: isDark ? "#2a2a2a" : "#ffffff",
+                color: isDark ? "#ffffff" : "#000000",
+                "& fieldset": {
+                  borderColor: isDark ? "#444444" : "#cccccc",
+                },
+                "&:hover fieldset": {
+                  borderColor: isDark ? "#666666" : "#aaaaaa",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: isDark ? "#aaaaaa" : "inherit",
               },
             }}
           />
+
+          {/* Password Input */}
           <TextField
             fullWidth
             type={showPassword ? "text" : "password"}
             label="Password"
-            placeholder="......."
             variant="outlined"
             size="small"
-            {...register("password", {
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            })}
+            {...register("password")}
             error={!!errors.password}
             helperText={errors.password?.message}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockOpenIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <LockOpenIcon sx={{ color: isDark ? "#888888" : "#A3A3A3", fontSize: 20 }} />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -174,6 +192,7 @@ const handleCloseSnackbar = (event, reason) => {
                     onClick={() => setShowPassword(!showPassword)}
                     edge="end"
                     size="small"
+                    sx={{ color: isDark ? "#aaaaaa" : "inherit" }}
                   >
                     {showPassword ? (
                       <VisibilityOffIcon sx={{ fontSize: 20 }} />
@@ -188,15 +207,27 @@ const handleCloseSnackbar = (event, reason) => {
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
                 height: 44,
-                backgroundColor: "white",
+                backgroundColor: isDark ? "#2a2a2a" : "#ffffff",
+                color: isDark ? "#ffffff" : "#000000",
+                "& fieldset": {
+                  borderColor: isDark ? "#444444" : "#cccccc",
+                },
+                "&:hover fieldset": {
+                  borderColor: isDark ? "#666666" : "#aaaaaa",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: isDark ? "#aaaaaa" : "inherit",
               },
             }}
           />
+
+          {/* Submit Button */}
           <Button
             type="submit"
             variant="contained"
             disableRipple
-            disabled= {isSubmitting} 
+            disabled={isSubmitting}
             sx={{
               width: "100%",
               height: 44,
@@ -207,22 +238,31 @@ const handleCloseSnackbar = (event, reason) => {
               mt: 1,
               boxShadow: "none",
               backgroundColor: "var(--primary-color)",
-              color: "#ffffff", 
+              color: "#ffffff",
               "&:hover": {
-                backgroundColor: "var(--primary-color)", 
+                backgroundColor: "var(--primary-color)",
                 boxShadow: "none",
-                opacity: 0.9, 
+                opacity: 0.9,
+              },
+              "&.Mui-disabled": {
+                backgroundColor: isDark ? "#333333" : "#e0e0e0",
+                color: isDark ? "#666666" : "#a1a1a1",
               },
             }}
           >
-            {isSubmitting ? <CircularProgress/> : "Login"}
+            {isSubmitting ? (
+              <CircularProgress size={24} sx={{ color: "#ffffff" }} />
+            ) : (
+              "Login"
+            )}
           </Button>
         </Box>
 
-         <Box sx={{ mt: 3, textAlign: "center" }}>
+        {/* Register Link */}
+        <Box sx={{ mt: 3, textAlign: "center" }}>
           <Typography
             variant="body2"
-            sx={{ color: "#737373", fontSize: "0.75rem" }}
+            sx={{ color: isDark ? "#aaaaaa" : "#737373", fontSize: "0.75rem" }}
           >
             Dont have an account?{" "}
             <Link
@@ -240,14 +280,15 @@ const handleCloseSnackbar = (event, reason) => {
               Register here
             </Link>
           </Typography>
-        </Box> 
-        
-         <Box sx={{ mt: 3, textAlign: "center" }}>
+        </Box>
+
+        {/* Forgot Password Link */}
+        <Box sx={{ mt: 1.5, textAlign: "center" }}>
           <Typography
             variant="body2"
-            sx={{ color: "#737373", fontSize: "0.75rem" }}
+            sx={{ color: isDark ? "#aaaaaa" : "#737373", fontSize: "0.75rem" }}
           >
-            ForgetPassword?{" "}
+            Forgot Password?{" "}
             <Link
               to="/auth/sendCode"
               style={{
@@ -263,14 +304,15 @@ const handleCloseSnackbar = (event, reason) => {
               Click here
             </Link>
           </Typography>
-        </Box> 
+        </Box>
       </Box>
-      <CustomSnackbar 
-      open={snackbar.open}
-      message={snackbar.message}
-      severity={snackbar.severity}
-      onClose={handleCloseSnackbar}
-    />
+
+      <CustomSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleCloseSnackbar}
+      />
     </Box>
   );
 }

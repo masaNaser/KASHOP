@@ -9,19 +9,23 @@ import {
   Button,
   InputAdornment,
   CircularProgress,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import LockIcon from '@mui/icons-material/Lock';
+import LockIcon from "@mui/icons-material/Lock";
 import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
 import { useNavigate, Link, useLocation } from "react-router-dom";
+import useThemeStore from "../../store/useThemeStore"; // 👈 استيراد الـ Theme Store
 
 export default function ResetPassword() {
+  const mode = useThemeStore((state) => state.theme); // 👈 جلب حالة الـ theme
+  const isDark = mode === "dark"; // 👈 متغير فحص للـ Dark Mode
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -94,6 +98,37 @@ export default function ResetPassword() {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  // 👈 تنسيق حقول الإدخال لدعم الـ Dark Mode
+  const textFieldStyles = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "8px",
+      height: 44,
+      backgroundColor: isDark ? "#2a2a2a" : "#ffffff",
+      color: isDark ? "#ffffff" : "#000000",
+      "& fieldset": {
+        borderColor: isDark ? "#444444" : "#cccccc",
+      },
+      "&:hover fieldset": {
+        borderColor: isDark ? "#666666" : "#aaaaaa",
+      },
+      "&.Mui-disabled": {
+        backgroundColor: isDark ? "#1a1a1a" : "#F9FAFB",
+        color: isDark ? "#777777" : "rgba(0, 0, 0, 0.38)",
+        "& fieldset": {
+          borderColor: isDark ? "#333333" : "#e0e0e0",
+        },
+      },
+    },
+    "& .MuiInputLabel-root": {
+      color: isDark ? "#aaaaaa" : "inherit",
+      "&.Mui-disabled": {
+        color: isDark ? "#666666" : "rgba(0, 0, 0, 0.38)",
+      },
+    },
+  };
+
+  const iconStyle = { color: isDark ? "#888888" : "#A3A3A3", fontSize: 20 };
+
   return (
     <Box
       sx={{
@@ -102,20 +137,26 @@ export default function ResetPassword() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#F8F9FC",
+        // 👈 خلفية الصفحة
+        backgroundColor: isDark ? "#121212" : "#F8F9FC",
+        color: isDark ? "#ffffff" : "#000000",
         p: 2,
         py: 6,
+        transition: "background-color 0.3s ease",
       }}
     >
+      {/* Form Card */}
       <Box
         sx={{
           width: "100%",
           maxWidth: 450,
           borderRadius: "16px",
-          border: "1px solid #F5F5F5",
-          backgroundColor: "white",
+          border: isDark ? "1px solid #2e2e2e" : "1px solid #F5F5F5",
+          backgroundColor: isDark ? "#1e1e1e" : "#ffffff",
           p: 4,
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.02)",
+          boxShadow: isDark
+            ? "0px 4px 20px rgba(0, 0, 0, 0.4)"
+            : "0px 4px 12px rgba(0, 0, 0, 0.02)",
         }}
       >
         <Typography
@@ -123,7 +164,7 @@ export default function ResetPassword() {
           component="h2"
           sx={{
             fontWeight: 700,
-            color: "#1A1A2E",
+            color: isDark ? "#ffffff" : "#1A1A2E",
             textAlign: "center",
             mb: 1,
             fontSize: "1.25rem",
@@ -135,7 +176,7 @@ export default function ResetPassword() {
         <Typography
           variant="body2"
           sx={{
-            color: "#737373",
+            color: isDark ? "#aaaaaa" : "#737373",
             textAlign: "center",
             mb: 3,
             fontSize: "0.85rem",
@@ -162,17 +203,11 @@ export default function ResetPassword() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <EmailIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <EmailIcon sx={iconStyle} />
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "#F9FAFB",
-              },
-            }}
+            sx={textFieldStyles}
           />
 
           {/* حقل الكود */}
@@ -191,17 +226,11 @@ export default function ResetPassword() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <LockIcon sx={iconStyle} />
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "white",
-              },
-            }}
+            sx={textFieldStyles}
           />
 
           {/* حقل كلمة المرور الجديدة */}
@@ -224,7 +253,7 @@ export default function ResetPassword() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockOpenIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <LockOpenIcon sx={iconStyle} />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -233,6 +262,7 @@ export default function ResetPassword() {
                     onClick={() => setShowPassword(!showPassword)}
                     edge="end"
                     size="small"
+                    sx={{ color: isDark ? "#aaaaaa" : "inherit" }}
                   >
                     {showPassword ? (
                       <VisibilityOffIcon sx={{ fontSize: 20 }} />
@@ -243,13 +273,7 @@ export default function ResetPassword() {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "white",
-              },
-            }}
+            sx={textFieldStyles}
           />
 
           <Button
@@ -272,6 +296,10 @@ export default function ResetPassword() {
                 backgroundColor: "var(--primary-color)",
                 boxShadow: "none",
                 opacity: 0.9,
+              },
+              "&.Mui-disabled": {
+                backgroundColor: isDark ? "#333333" : "#e0e0e0",
+                color: isDark ? "#666666" : "#a1a1a1",
               },
             }}
           >

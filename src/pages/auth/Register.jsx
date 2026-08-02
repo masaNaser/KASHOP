@@ -10,7 +10,7 @@ import {
   Button,
   InputAdornment,
   IconButton,
-   CircularProgress,
+  CircularProgress,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
@@ -22,16 +22,21 @@ import {
 } from "@mui/icons-material";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RegisterSchema } from "../../validations/RegisterSchema";
+import useThemeStore from "../../store/useThemeStore"; // 👈 استيراد الـ Theme Store
+
 export default function Register() {
+  const mode = useThemeStore((state) => state.theme); // 👈 جلب حالة الـ theme
+  const isDark = mode === "dark"; // 👈 متغير فحص للـ Dark Mode
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  // const[serverError,setServerError]=useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "error" });
+
   const {
     register,
     handleSubmit,
     getValues,
-    formState: { errors ,isSubmitting},
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       username: "",
@@ -41,12 +46,11 @@ export default function Register() {
       password: "",
       confirmPassword: "",
     },
-    resolver:yupResolver(RegisterSchema), 
+    resolver: yupResolver(RegisterSchema), 
   });
 
   const onSubmit = async (data) => {
     try {
-      // setServerError(null);
       setSnackbar({ open: false, message: "", severity: "error" });
       const response = await registerUser(data);
       console.log("Registration successful:", response);
@@ -56,13 +60,35 @@ export default function Register() {
       console.error("Registration failed:", error);
       const errorMessage = error.response?.data?.errors || "Registration failed. Please try again.";
       setSnackbar({ open: true, message: errorMessage, severity: "error" });
-      // setServerError(errorMessage);
     }
   };
-const handleCloseSnackbar = (event, reason) => {
-  if (reason === 'clickaway') return;
-  setSnackbar({ ...snackbar, open: false });
-};
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  // 👈 دالة مساعدة لتنسيق حقول الإدخال وتقليل التكرار
+  const textFieldStyles = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "8px",
+      height: 44,
+      backgroundColor: isDark ? "#2a2a2a" : "#ffffff",
+      color: isDark ? "#ffffff" : "#000000",
+      "& fieldset": {
+        borderColor: isDark ? "#444444" : "#cccccc",
+      },
+      "&:hover fieldset": {
+        borderColor: isDark ? "#666666" : "#aaaaaa",
+      },
+    },
+    "& .MuiInputLabel-root": {
+      color: isDark ? "#aaaaaa" : "inherit",
+    },
+  };
+
+  const iconStyle = { color: isDark ? "#888888" : "#A3A3A3", fontSize: 20 };
+
   return (
     <Box
       sx={{
@@ -71,29 +97,35 @@ const handleCloseSnackbar = (event, reason) => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#F8F9FC",
+        // 👈 خلفية الصفحة
+        backgroundColor: isDark ? "#121212" : "#F8F9FC",
+        color: isDark ? "#ffffff" : "#000000",
         p: 2,
         py: 6,
+        transition: "background-color 0.3s ease",
       }}
     >
       <Box sx={{ textAlign: "center", mb: 4 }}>
         <Typography
           variant="body2"
-          sx={{ color: "var(--secondary-color)", mt: 0.5, fontSize: "0.75rem" }}
+          sx={{ color: isDark ? "#aaaaaa" : "var(--secondary-color)", mt: 0.5, fontSize: "0.75rem" }}
         >
           Join our curated premium marketplace.
         </Typography>
       </Box>
 
+      {/* Form Card */}
       <Box
         sx={{
           width: "100%",
           maxWidth: 450,
           borderRadius: "16px",
-          border: "1px solid #F5F5F5",
-          backgroundColor: "white",
+          border: isDark ? "1px solid #2e2e2e" : "1px solid #F5F5F5",
+          backgroundColor: isDark ? "#1e1e1e" : "#ffffff",
           p: 4,
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.02)",
+          boxShadow: isDark
+            ? "0px 4px 20px rgba(0, 0, 0, 0.4)"
+            : "0px 4px 12px rgba(0, 0, 0, 0.02)",
         }}
       >
         <Typography
@@ -101,7 +133,7 @@ const handleCloseSnackbar = (event, reason) => {
           component="h2"
           sx={{
             fontWeight: 700,
-            color: "#1A1A2E",
+            color: isDark ? "#ffffff" : "#1A1A2E",
             textAlign: "center",
             mb: 3,
             fontSize: "1.25rem",
@@ -116,6 +148,7 @@ const handleCloseSnackbar = (event, reason) => {
           noValidate
           sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
         >
+          {/* Username */}
           <TextField
             fullWidth
             label="Username"
@@ -128,23 +161,14 @@ const handleCloseSnackbar = (event, reason) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PersonIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <PersonIcon sx={iconStyle} />
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "white",
-              },
-            }}
+            sx={textFieldStyles}
           />
-          {/* {serverError?.length>0? (
-            <Typography variant="body2" sx={{ color: "error.main", mt: 1 }}>
-              {serverError}
-            </Typography>
-          ):''} */}
+
+          {/* Full Name */}
           <TextField
             fullWidth
             label="Full Name"
@@ -157,19 +181,14 @@ const handleCloseSnackbar = (event, reason) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PersonIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <PersonIcon sx={iconStyle} />
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "white",
-              },
-            }}
+            sx={textFieldStyles}
           />
 
+          {/* Email */}
           <TextField
             fullWidth
             type="email"
@@ -188,50 +207,38 @@ const handleCloseSnackbar = (event, reason) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <EmailIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <EmailIcon sx={iconStyle} />
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "white",
-              },
-            }}
+            sx={textFieldStyles}
           />
 
+          {/* Phone Number */}
           <TextField
             fullWidth
             label="Phone Number"
             placeholder="+1 (555) 000-0000"
             variant="outlined"
             size="small"
-            {...register("phoneNumber", {
-            })}
+            {...register("phoneNumber")}
             error={!!errors.phoneNumber}
             helperText={errors.phoneNumber?.message}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LocalPhoneIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <LocalPhoneIcon sx={iconStyle} />
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "white",
-              },
-            }}
+            sx={textFieldStyles}
           />
 
+          {/* Password */}
           <TextField
             fullWidth
             type={showPassword ? "text" : "password"}
             label="Password"
-            placeholder="......."
             variant="outlined"
             size="small"
             {...register("password", {
@@ -245,7 +252,7 @@ const handleCloseSnackbar = (event, reason) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockOpenIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <LockOpenIcon sx={iconStyle} />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -254,6 +261,7 @@ const handleCloseSnackbar = (event, reason) => {
                     onClick={() => setShowPassword(!showPassword)}
                     edge="end"
                     size="small"
+                    sx={{ color: isDark ? "#aaaaaa" : "inherit" }}
                   >
                     {showPassword ? (
                       <VisibilityOffIcon sx={{ fontSize: 20 }} />
@@ -264,20 +272,14 @@ const handleCloseSnackbar = (event, reason) => {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "white",
-              },
-            }}
+            sx={textFieldStyles}
           />
 
+          {/* Confirm Password */}
           <TextField
             fullWidth
             type={showConfirmPassword ? "text" : "password"}
             label="Confirm Password"
-            placeholder="......."
             variant="outlined"
             size="small"
             {...register("confirmPassword", {
@@ -289,7 +291,7 @@ const handleCloseSnackbar = (event, reason) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <LockOpenIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <LockOpenIcon sx={iconStyle} />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -298,6 +300,7 @@ const handleCloseSnackbar = (event, reason) => {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     edge="end"
                     size="small"
+                    sx={{ color: isDark ? "#aaaaaa" : "inherit" }}
                   >
                     {showConfirmPassword ? (
                       <VisibilityOffIcon sx={{ fontSize: 20 }} />
@@ -308,20 +311,15 @@ const handleCloseSnackbar = (event, reason) => {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "white",
-              },
-            }}
+            sx={textFieldStyles}
           />
 
+          {/* Submit Button */}
           <Button
             type="submit"
             variant="contained"
             disableRipple
-            disabled= {isSubmitting} 
+            disabled={isSubmitting}
             sx={{
               width: "100%",
               height: 44,
@@ -332,22 +330,31 @@ const handleCloseSnackbar = (event, reason) => {
               mt: 1,
               boxShadow: "none",
               backgroundColor: "var(--primary-color)",
-              color: "#ffffff", 
+              color: "#ffffff",
               "&:hover": {
-                backgroundColor: "var(--primary-color)", 
+                backgroundColor: "var(--primary-color)",
                 boxShadow: "none",
-                opacity: 0.9, 
+                opacity: 0.9,
+              },
+              "&.Mui-disabled": {
+                backgroundColor: isDark ? "#333333" : "#e0e0e0",
+                color: isDark ? "#666666" : "#a1a1a1",
               },
             }}
           >
-            {isSubmitting ? <CircularProgress/> : "Create Account"}
+            {isSubmitting ? (
+              <CircularProgress size={24} sx={{ color: "#ffffff" }} />
+            ) : (
+              "Create Account"
+            )}
           </Button>
         </Box>
 
+        {/* Login Link */}
         <Box sx={{ mt: 3, textAlign: "center" }}>
           <Typography
             variant="body2"
-            sx={{ color: "var(--secondary-color)", fontSize: "0.75rem" }}
+            sx={{ color: isDark ? "#aaaaaa" : "var(--secondary-color)", fontSize: "0.75rem" }}
           >
             Already have an account?{" "}
             <Link
@@ -367,12 +374,13 @@ const handleCloseSnackbar = (event, reason) => {
           </Typography>
         </Box>
       </Box>
+
       <CustomSnackbar 
-      open={snackbar.open}
-      message={snackbar.message}
-      severity={snackbar.severity}
-      onClose={handleCloseSnackbar}
-    />
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleCloseSnackbar}
+      />
     </Box>
   );
 }

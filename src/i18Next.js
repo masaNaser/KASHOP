@@ -23,7 +23,12 @@ i18n
           "New Collection": "New Collection",
       "Elevate Your Style": "Elevate Your Style",
       "Hero Description": "Discover a curated selection of premium electronics, fashion, and lifestyle essentials designed for the modern connoisseur.",
-      "Shop Now": "Shop Now"
+      "Shop Now": "Shop Now",
+      "add to cart":"add to cart",
+      "Product Description":"Product Description",
+"In Stock": "In Stock ({{count}})",
+      "Out of Stock": "Out of Stock",
+      "Customer Reviews": "Customer Reviews ({{count}})"
         }
       },
         ar: {
@@ -41,7 +46,12 @@ i18n
           "New Collection": "تشكيلة جديدة",
       "Elevate Your Style": "ارتق بأسلوبك",
       "Hero Description": "اكتشف مجموعة مختارة من الإلكترونيات والملابس والمستلزمات العصرية المصممة خصيصاً لأصحاب الذوق الرفيع.",
-      "Shop Now": "تسوق الآن"
+      "Shop Now": "تسوق الآن",
+      "add to cart":"اضف الى السلة",
+      "Product Description":"وصف المنتج",
+      "In Stock":  " ({{count}})متوفر في المخزن",
+      "Out of Stock": "غير متوفر",
+      "Customer Reviews": "آراء العملاء ({{count}})"
         }
       }
     },

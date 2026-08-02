@@ -13,8 +13,12 @@ import {
 import EmailIcon from "@mui/icons-material/Email";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, Link } from "react-router-dom";
+import useThemeStore from "../../store/useThemeStore"; // 👈 استيراد الـ Theme Store
 
 export default function SendCode() {
+  const mode = useThemeStore((state) => state.theme); // 👈 جلب حالة الـ theme
+  const isDark = mode === "dark"; // 👈 متغير فحص للـ Dark Mode
+
   const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -26,17 +30,18 @@ export default function SendCode() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      email: "",
-    },
-  });
+  } = {
+    ...useForm({
+      defaultValues: {
+        email: "",
+      },
+    }),
+  };
 
   const onSubmit = async (data) => {
     try {
       setSnackbar({ open: false, message: "", severity: "error" });
-      console.log("data",data)
-      // إرسال البيانات للـ Service
+      console.log("data", data);
       const response = await sendCode(data);
       console.log("Code sent successfully:", response);
 
@@ -47,7 +52,7 @@ export default function SendCode() {
       });
 
       setTimeout(() => {
-         navigate("/auth/resetPassword", { state: { email: data.email } });
+        navigate("/auth/resetPassword", { state: { email: data.email } });
       }, 1500);
 
       return response;
@@ -71,6 +76,27 @@ export default function SendCode() {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  // 👈 تنسيق حقل البريد الإلكتروني لدعم الـ Dark Mode
+  const textFieldStyles = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "8px",
+      height: 44,
+      backgroundColor: isDark ? "#2a2a2a" : "#ffffff",
+      color: isDark ? "#ffffff" : "#000000",
+      "& fieldset": {
+        borderColor: isDark ? "#444444" : "#cccccc",
+      },
+      "&:hover fieldset": {
+        borderColor: isDark ? "#666666" : "#aaaaaa",
+      },
+    },
+    "& .MuiInputLabel-root": {
+      color: isDark ? "#aaaaaa" : "inherit",
+    },
+  };
+
+  const iconStyle = { color: isDark ? "#888888" : "#A3A3A3", fontSize: 20 };
+
   return (
     <Box
       sx={{
@@ -78,22 +104,27 @@ export default function SendCode() {
         minHeight: "calc(100vh - 64px)",
         flexDirection: "column",
         alignItems: "center",
-        justify: "center",
-        backgroundColor: "#F8F9FC",
+        justifyContent: "center",
+        // 👈 خلفية الصفحة
+        backgroundColor: isDark ? "#121212" : "#F8F9FC",
+        color: isDark ? "#ffffff" : "#000000",
         p: 2,
         py: 6,
+        transition: "background-color 0.3s ease",
       }}
     >
-
+      {/* Form Card */}
       <Box
         sx={{
           width: "100%",
           maxWidth: 450,
           borderRadius: "16px",
-          border: "1px solid #F5F5F5",
-          backgroundColor: "white",
+          border: isDark ? "1px solid #2e2e2e" : "1px solid #F5F5F5",
+          backgroundColor: isDark ? "#1e1e1e" : "#ffffff",
           p: 4,
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.02)",
+          boxShadow: isDark
+            ? "0px 4px 20px rgba(0, 0, 0, 0.4)"
+            : "0px 4px 12px rgba(0, 0, 0, 0.02)",
         }}
       >
         <Typography
@@ -101,7 +132,7 @@ export default function SendCode() {
           component="h2"
           sx={{
             fontWeight: 700,
-            color: "#1A1A2E",
+            color: isDark ? "#ffffff" : "#1A1A2E",
             textAlign: "center",
             mb: 1,
             fontSize: "1.25rem",
@@ -113,13 +144,14 @@ export default function SendCode() {
         <Typography
           variant="body2"
           sx={{
-            color: "#737373",
+            color: isDark ? "#aaaaaa" : "#737373",
             textAlign: "center",
             mb: 3,
             fontSize: "0.85rem",
           }}
         >
-          Enter your email address and we will send you a verification code to reset your password.
+          Enter your email address and we will send you a verification code to
+          reset your password.
         </Typography>
 
         <Box
@@ -147,17 +179,11 @@ export default function SendCode() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <EmailIcon sx={{ color: "#A3A3A3", fontSize: 20 }} />
+                  <EmailIcon sx={iconStyle} />
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                height: 44,
-                backgroundColor: "white",
-              },
-            }}
+            sx={textFieldStyles}
           />
 
           <Button
@@ -181,9 +207,17 @@ export default function SendCode() {
                 boxShadow: "none",
                 opacity: 0.9,
               },
+              "&.Mui-disabled": {
+                backgroundColor: isDark ? "#333333" : "#e0e0e0",
+                color: isDark ? "#666666" : "#a1a1a1",
+              },
             }}
           >
-            {isSubmitting ? <CircularProgress size={24} sx={{ color: "#ffffff" }} /> : "Send Code"}
+            {isSubmitting ? (
+              <CircularProgress size={24} sx={{ color: "#ffffff" }} />
+            ) : (
+              "Send Code"
+            )}
           </Button>
         </Box>
 

@@ -2,10 +2,10 @@ import { Footer } from "../components/Footer";
 import { Outlet } from "react-router-dom";
 import {
   AppBar,
+  Container,
   Toolbar,
   Typography,
 } from "@mui/material";
-
 export default function AuthLayout() {
   return (
     <>
@@ -13,11 +13,13 @@ export default function AuthLayout() {
       position="sticky"
       elevation={0}
       sx={{
-        backgroundColor: "white",
+        bgcolor: "background.paper",
         borderBottom: "1px solid #E5E5E5",
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
-    >
+    >    
+    <Container maxWidth="lg" >
+
       <Toolbar
         className="mx-auto w-full max-w-[1280px] px-6"
         sx={{
@@ -36,7 +38,7 @@ export default function AuthLayout() {
           sx={{
             fontWeight: 700,
             letterSpacing: "-0.025em",
-            color: "var(--primary-color, #7C3AED)",
+            color: "var(--primary-color)",
             fontSize: "1.5rem",
             cursor: "pointer",
           }}
@@ -44,7 +46,9 @@ export default function AuthLayout() {
           KASHOP
         </Typography>
       </Toolbar>
+      </Container>
     </AppBar>
+    
     <Outlet />
     <Footer /> 
     </>

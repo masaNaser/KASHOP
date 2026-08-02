@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '../services/product';
-import i18n from '../i18Next';
+import { useTranslation } from 'react-i18next';
 
 
 export default function useProducts() {
+  const { i18n } = useTranslation();
   const query = useQuery({
     queryKey: ["products",i18n.language],
     queryFn: getProducts,

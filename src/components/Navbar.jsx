@@ -23,10 +23,13 @@ import {
   Login as LoginIcon,
   PersonAdd as PersonAddIcon,
   Logout as LogoutIcon,
+  Brightness7,
+  Brightness4,
 } from "@mui/icons-material";
 import useAuthStore from "../store/useAuthStore";
 import { useTranslation } from "react-i18next";
 import i18n from "../i18Next";
+import useThemeStore from "../store/useThemeStore";
 const SearchWrapper = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: "50px",
@@ -70,13 +73,18 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
-  const token = useAuthStore((state) => state.token); // جلب قيمة التوكن من الـ zustand store
+  const token = useAuthStore((state) => state.token);
   console.log("Token in Navbar:", token);
-  const logout = useAuthStore((state) => state.logout); // جلب دالة تسجيل الخروج من الـ zustand store
+  const logout = useAuthStore((state) => state.logout);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
+  const mode = useThemeStore((state) => state.theme);
+    const isDark = mode === "dark"; 
+
+  console.log("Current theme mode:", mode);
   const location = useLocation();
   const { t } = useTranslation();
-  const changeLanguage = (lng) => {
-    console.log(lng);
+  const changeLanguage = () => {
+    console.log(i18n.language);
     const newLang = i18n.language === "ar" ? "en" : "ar";
     i18n.changeLanguage(newLang);
   };
@@ -94,9 +102,10 @@ export default function Navbar() {
       position="sticky"
       elevation={0}
       sx={{
-        backgroundColor: "white",
+        bgcolor: "background.paper",
         borderBottom: "1px solid #E5E5E5",
         zIndex: (theme) => theme.zIndex.drawer + 1,
+        color: isDark? "#FFFFFF" : "#404043",
       }}
     >
       <Container maxWidth="lg" disableGutters>
@@ -110,6 +119,7 @@ export default function Navbar() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            color: isDark ? "#FFFFFF" : "#404043",
           }}
         >
           {/* اللوجو KASHOP */}
@@ -119,7 +129,7 @@ export default function Navbar() {
             to="/"
             sx={{
               fontWeight: 700,
-              color: "var(--primary-color, #7C3AED)",
+              color: "var(--primary-color)",
               fontSize: { xs: "1.25rem", sm: "1.5rem" },
               textDecoration: "none",
             }}
@@ -150,7 +160,11 @@ export default function Navbar() {
                     textTransform: "none",
                     fontSize: "0.875rem",
                     fontWeight: 500,
-                    color: isActive ? "var(--primary-color)" : "#525252",
+                    color: isActive
+                      ? "var(--primary-color)"
+                      :isDark
+                        ? "#FFFFFF"
+                        : "#525252",
                     "&:hover": {
                       color: "var(--primary-color)",
                       backgroundColor: "transparent",
@@ -189,19 +203,27 @@ export default function Navbar() {
               </SearchIconWrapper>
               <StyledInputBase placeholder={t("Search...")} />
             </SearchWrapper>
-
+            <IconButton
+              onClick={toggleTheme}
+              sx={{ color: isDark ? "#FFFFFF" : "#1A1A2E" }}
+            >
+              {isDark ? <Brightness7 /> : <Brightness4 />}
+            </IconButton>
             <Button
               onClick={changeLanguage}
               // startIcon={<LanguageIcon sx={{ fontSize: 22, color: "#1A1A2E" }}/>}
               color="inherit"
-              sx={{ fontWeight: "bold", color: "#1A1A2E" }}
+              sx={{
+                fontWeight: "bold",
+                color: isDark ? "#FFFFFF" : "#1A1A2E",
+              }}
             >
               {i18n.language === "ar" ? "EN" : "العربية"}
             </Button>
 
             <IconButton
               onClick={handleProfileMenuOpen}
-              sx={{ color: "#1A1A2E" }}
+              sx={{ color: isDark ? "#FFFFFF" : "#1A1A2E" }}
             >
               <PersonIcon sx={{ fontSize: 24 }} />
             </IconButton>
@@ -218,13 +240,13 @@ export default function Navbar() {
                 sx: {
                   width: 192,
                   borderRadius: "12px",
-                  mt: 1,
+                  mt: 5,
                   border: "1px solid #F5F5F5",
                   boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)",
                   "& .MuiMenuItem-root": {
                     fontSize: "0.875rem",
                     borderRadius: "8px",
-                    color: "#525252",
+                    color: isDark ? "#FFFFFF" : "#525252",
                     gap: 1.5,
                     padding: "8px 12px",
                     "&:hover": {
@@ -238,22 +260,22 @@ export default function Navbar() {
               {token ? (
                 <>
                   <MenuItem component={Link} to="/profile">
-                    <PersonAddIcon sx={{ fontSize: 18 }} />
+                    <PersonAddIcon sx={{ fontSize: 18, marginRight: 1 }} />
                     {t("My Profile")}
                   </MenuItem>
                   <MenuItem component={Link} to="/auth/login" onClick={logout}>
-                    <LogoutIcon sx={{ fontSize: 18 }} />
+                    <LogoutIcon sx={{ fontSize: 18, marginRight: 1 }} />
                     {t("Log out")}
                   </MenuItem>
                 </>
               ) : (
                 <>
                   <MenuItem component={Link} to="/auth/login">
-                    <LoginIcon sx={{ fontSize: 18 }} />
+                    <LoginIcon sx={{ fontSize: 18, marginRight: 1 }} />
                     {t("Log in")}
                   </MenuItem>
                   <MenuItem component={Link} to="/auth/register">
-                    <PersonAddIcon sx={{ fontSize: 18 }} />
+                    <PersonAddIcon sx={{ fontSize: 18, marginRight: 1 }} />
                     {t("Register")}
                   </MenuItem>
                 </>
@@ -261,7 +283,11 @@ export default function Navbar() {
             </Menu>
 
             {token && (
-              <IconButton sx={{ color: "#1A1A2E" }} component={Link} to="/cart">
+              <IconButton
+                sx={{ color: isDark ? "#FFFFFF" : "#1A1A2E" }}
+                component={Link}
+                to="/cart"
+              >
                 <ShoppingCartOutlinedIcon sx={{ fontSize: 22 }} />
               </IconButton>
             )}
@@ -272,7 +298,7 @@ export default function Navbar() {
             onClick={() => setIsMobileOpen(!isMobileOpen)}
             sx={{
               display: { xs: "flex", md: "none" },
-              color: "#1A1A2E",
+              color: isDark ? "#FFFFFF" : "#1A1A2E",
             }}
           >
             {isMobileOpen ? <CloseIcon /> : <MenuIcon />}
@@ -285,10 +311,10 @@ export default function Navbar() {
           sx={{
             display: { xs: "flex", md: "none" },
             position: "absolute",
-            top: 64,
+            top: 70,
             left: 0,
             width: "100%",
-            backgroundColor: "white",
+            backgroundColor: "background.paper",
             borderBottom: "1px solid #E5E5E5",
             p: 2.5,
             boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.08)",
@@ -324,7 +350,11 @@ export default function Navbar() {
                     py: 1,
                     px: 1.5,
                     borderRadius: "8px",
-                    color: isActive ? "var(--primary-color)" : "#525252",
+                    color: isActive
+                      ? "var(--primary-color)"
+                      : isDark
+                        ? "#FFFFFF"
+                        : "#525252",
                     backgroundColor: isActive ? "#F3F1FF" : "transparent",
                   }}
                 >
@@ -351,13 +381,16 @@ export default function Navbar() {
                   p: 1.2,
                   borderRadius: "8px",
                   textDecoration: "none",
-                  color: "#525252",
+                  color: isDark ? "#FFFFFF" : "#525252",
                   "&:hover": { backgroundColor: "#F8F9FC" },
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                   <ShoppingCartOutlinedIcon
-                    sx={{ fontSize: 22, color: "#1A1A2E" }}
+                    sx={{
+                      fontSize: 22,
+                      color: isDark ? "#FFFFFF" : "#1A1A2E",
+                    }}
                   />
                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
                     {t("Cart")}
@@ -374,15 +407,24 @@ export default function Navbar() {
                 p: 1.2,
                 borderRadius: "8px",
                 cursor: "pointer",
-                color: "#525252",
+                color: isDark ? "#FFFFFF" : "#525252",
                 "&:hover": { backgroundColor: "#F8F9FC" },
               }}
             >
+              <IconButton
+                onClick={toggleTheme}
+                sx={{ color: isDark ? "#FFFFFF" : "#1A1A2E" }}
+              >
+                {isDark ? <Brightness7 /> : <Brightness4 />}
+              </IconButton>
               <Button
                 onClick={changeLanguage}
                 // startIcon={<LanguageIcon sx={{ fontSize: 22, color: "#1A1A2E" }}/>}
                 color="inherit"
-                sx={{ fontWeight: "bold" }}
+                sx={{
+                  fontWeight: "bold",
+                  color: isDark ? "#FFFFFF" : "#1A1A2E",
+                }}
               >
                 {i18n.language === "ar" ? "EN" : "العربية"}
               </Button>
@@ -408,7 +450,7 @@ export default function Navbar() {
                     borderRadius: "8px",
                     textTransform: "none",
                     borderColor: "#E5E5E5",
-                    color: "#1A1A2E",
+                    color: isDark ? "#FFFFFF" : "#1A1A2E",
                   }}
                 >
                   {t("My Profile")}
@@ -427,7 +469,7 @@ export default function Navbar() {
                     borderRadius: "8px",
                     textTransform: "none",
                     borderColor: "#E5E5E5",
-                    color: "#1A1A2E",
+                    color: isDark ? "#FFFFFF" : "#1A1A2E",
                   }}
                 >
                   {t("Log Out")}
@@ -446,7 +488,7 @@ export default function Navbar() {
                     borderRadius: "8px",
                     textTransform: "none",
                     borderColor: "#E5E5E5",
-                    color: "#1A1A2E",
+                    color: isDark ? "#FFFFFF" : "#1A1A2E",
                   }}
                 >
                   {t("Log In")}
