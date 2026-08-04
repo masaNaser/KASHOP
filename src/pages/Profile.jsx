@@ -27,6 +27,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CustomSnackbar from "../components/CustomSnackbar";
 import useThemeStore from "../store/useThemeStore"; // 👈 استيراد الـ Theme Store
+import Loader from "../components/Loader";
 
 function TabPanel(props) {
   // eslint-disable-next-line react/prop-types
@@ -187,9 +188,7 @@ export default function Profile() {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 8 }}>
-        <CircularProgress sx={{ color: "var(--primary-color)" }} />
-      </Box>
+      <Loader />
     );
   }
 

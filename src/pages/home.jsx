@@ -1,6 +1,6 @@
 import HeroHome from "../components/HeroHome";
 import Categories from "./Categories";
-import Product from "./product/Product";
+import Product from "../components/Product";
 
 
 export default function Home() {

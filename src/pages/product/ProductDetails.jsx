@@ -4,7 +4,7 @@ import {
   Box,
   CircularProgress,
   Container,
-  Grid, // نستخدم Grid2 الجديد من MUI للحصول على أداء أفضل وتجاوب أسهل
+  Grid, 
   Typography,
   Button,
   Rating,
@@ -14,7 +14,6 @@ import {
   Stack,
   Tooltip
 } from "@mui/material";
-// import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useTranslation } from "react-i18next";
 import useAuthStore from "../../store/useAuthStore";
 export default function ProductDetails() {

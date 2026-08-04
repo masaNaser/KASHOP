@@ -28,7 +28,16 @@ i18n
       "Product Description":"Product Description",
 "In Stock": "In Stock ({{count}})",
       "Out of Stock": "Out of Stock",
-      "Customer Reviews": "Customer Reviews ({{count}})"
+      "Customer Reviews": "Customer Reviews ({{count}})",
+      "View All":"View All",
+      "Sort By": "Sort By",
+      "Low to High": "Low to High",
+      "High to Low": "High to Low",
+      "Order": "Order",
+      "Price": "Price",
+      "Name": "Name",
+      "Rating": "Rating",
+      "Our Products": "Our Products",
         }
       },
         ar: {
@@ -51,7 +60,16 @@ i18n
       "Product Description":"وصف المنتج",
       "In Stock":  " ({{count}})متوفر في المخزن",
       "Out of Stock": "غير متوفر",
-      "Customer Reviews": "آراء العملاء ({{count}})"
+      "Customer Reviews": "آراء العملاء ({{count}})",
+      "View All":"عرض الكل",
+      "Sort By": "ترتيب حسب",
+      "Low to High": "من الأقل إلى الأعلى",
+      "High to Low": " من الأعلى إلى الأقل",
+      "Order": "الترتيب",
+      "Price": "السعر",
+      "Name": "الاسم",
+      "Rating": "التقييم",
+      "Our Products": "منتجاتنا",
         }
       }
     },

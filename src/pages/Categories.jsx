@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  CircularProgress,
   Box,
   Typography,
   Button,
@@ -11,6 +10,7 @@ import CustomSnackbar from "../components/CustomSnackbar";
 import useCategories from "../hook/useCategories";
 import { Link } from "react-router-dom";
 import useThemeStore from "../store/useThemeStore"; 
+import Loader from "../components/Loader";
 
 export default function Categories() {
   const mode = useThemeStore((state) => state.theme); 
@@ -27,9 +27,7 @@ export default function Categories() {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <CircularProgress />
-      </Box>
+      <Loader />
     );
   }
 

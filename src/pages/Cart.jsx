@@ -12,7 +12,6 @@ import {
   Button,
   TextField,
   Divider,
-  CircularProgress,
   Stack,
 } from "@mui/material";
 
@@ -33,7 +32,8 @@ import {
 } from "../hook/useCart";
 import CheckoutModal from "../components/dialog/CheckoutModal";
 import { useState } from "react";
-
+import Loader from "../components/Loader";
+import useThemeStore from "../store/useThemeStore";
 export default function Cart() {
   const { data, isLoading } = useGetCart();
   const { mutate: updateQuantity } = useUpdateCartQuantity();
@@ -41,7 +41,8 @@ export default function Cart() {
   const { mutate: clearCart } = useClearCart();
   const [openCheckoutModal, setOpenCheckoutModal] = useState(false);
   console.log("cart", data?.data.items);
-
+  const mode = useThemeStore((state) => state.theme);
+  const isDark = mode === "dark";
   const handleIncrement = (productId, currentCount) => {
     updateQuantity({ productId, count: currentCount + 1 });
   };
@@ -54,9 +55,7 @@ export default function Cart() {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
-        <CircularProgress sx={{ color: "var(--primary-color)" }} />
-      </Box>
+      <Loader />
     );
   }
 
@@ -67,13 +66,13 @@ export default function Cart() {
     <Box
       sx={{
         p: { xs: 2, md: 4 },
-        backgroundColor: "#F9FAFB",
-        minHeight: "100vh",
+         backgroundColor: isDark ? "#1e1e1e" : "#ffffff",
+         minHeight: "100vh",
       }}
     >
       <Typography
         variant="h4"
-        sx={{ fontWeight: 700, mb: 3, color: "#111827" }}
+        sx={{ fontWeight: 700, mb: 3, color: isDark ? "#ffffff" : "#111827" }}
       >
         Shopping Cart
       </Typography>
@@ -98,26 +97,26 @@ export default function Cart() {
             }}
           >
             <Table>
-              <TableHead sx={{ backgroundColor: "#F3F4F6" }}>
+              <TableHead sx={{ backgroundColor: isDark ? "#2a2a2a" : "#F3F4F6" }}>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 600, color: "#4B5563" }}>
+                  <TableCell sx={{ fontWeight: 600, color: isDark ? "#ffffff" : "#4B5563" }}>
                     Product
                   </TableCell>
                   <TableCell
                     align="center"
-                    sx={{ fontWeight: 600, color: "#4B5563" }}
+                    sx={{ fontWeight: 600, color: isDark ? "#ffffff" : "#4B5563" }}
                   >
                     Price
                   </TableCell>
                   <TableCell
                     align="center"
-                    sx={{ fontWeight: 600, color: "#4B5563" }}
+                    sx={{ fontWeight: 600, color: isDark ? "#ffffff" : "#4B5563" }}
                   >
                     Quantity
                   </TableCell>
                   <TableCell
                     align="center"
-                    sx={{ fontWeight: 600, color: "#4B5563" }}
+                    sx={{ fontWeight: 600, color: isDark ? "#ffffff" : "#4B5563" }}
                   >
                     Total
                   </TableCell>
@@ -152,7 +151,7 @@ export default function Cart() {
                           </Box>
                           */}
                           <Typography
-                            sx={{ fontWeight: 600, color: "#111827" }}
+                            sx={{ fontWeight: 600, color: isDark ? "#ffffff" : "#111827" }}
                           >
                             {item.productName}
                           </Typography>
@@ -259,7 +258,7 @@ export default function Cart() {
             <Box
               sx={{
                 p: 2,
-                backgroundColor: "#F3F4F6",
+                backgroundColor: isDark ? "#2a2a2a" : "#F9FAFB",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -281,7 +280,7 @@ export default function Cart() {
                 onClick={clearCart}
                 startIcon={<RemoveShoppingCartIcon />}
                 sx={{
-                  color: "#6B7280",
+                  color: isDark ? "#ffffff" : "#4B5563",
                   textTransform: "none",
                   fontWeight: 600,
                 }}
@@ -304,7 +303,7 @@ export default function Cart() {
           >
             <Typography
               variant="h6"
-              sx={{ fontWeight: 700, mb: 3, color: "#111827" }}
+              sx={{ fontWeight: 700, mb: 3, color: isDark ? "#ffffff" : "#111827" }}
             >
               Order Summary
             </Typography>
@@ -369,8 +368,8 @@ export default function Cart() {
               onClick={() => setOpenCheckoutModal(true)}
               endIcon={<ArrowForwardIcon />}
               sx={{
-                backgroundColor: "#312E81",
-                "&:hover": { backgroundColor: "#1E1B4B" },
+                backgroundColor: "var(--primary-color)",
+                "&:hover": { backgroundColor: "var(--primary-color-dark)" },
                 py: 1.5,
                 borderRadius: "10px",
                 textTransform: "none",
@@ -423,12 +422,12 @@ export default function Cart() {
                 variant="contained"
                 disableElevation
                 sx={{
-                  backgroundColor: "#EEF2FF",
-                  color: "#4F46E5",
+                  backgroundColor: "var(--primary-color)",
+                  color: isDark ? "#ffffff" : "#ffffff",
                   fontWeight: 600,
                   borderRadius: "8px",
                   textTransform: "none",
-                  "&:hover": { backgroundColor: "#E0E7FF" },
+                  "&:hover": { backgroundColor: "var(--primary-color-dark)" },
                 }}
               >
                 Apply
@@ -442,7 +441,7 @@ export default function Cart() {
             sx={{
               p: 2.5,
               borderRadius: "16px",
-              backgroundColor: "#EEF2FF",
+              backgroundColor: "var(--primary-color)",
               display: "flex",
               justify: "space-between",
               alignItems: "flex-start",
@@ -451,14 +450,14 @@ export default function Cart() {
             <Box sx={{ pr: 1 }}>
               <Typography
                 variant="subtitle2"
-                sx={{ fontWeight: 700, color: "#312E81", mb: 0.5 }}
+                sx={{ fontWeight: 700, color: isDark ? "#ffffff" : "#111827", mb: 0.5 }}
               >
                 Member Rewards
               </Typography>
               <Typography
                 variant="caption"
                 sx={{
-                  color: "#4F46E5",
+                  color: isDark ? "#ffffff" : "#111827",
                   display: "block",
                   mb: 1,
                   lineHeight: 1.4,

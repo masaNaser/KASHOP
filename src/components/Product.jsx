@@ -10,11 +10,6 @@ import {
   Grid,
   Rating,
   Tooltip,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Stack,
 } from "@mui/material";
 import useProducts from "../../hook/useProducts";
 import { Link } from "react-router-dom";
@@ -28,17 +23,12 @@ import Loader from "../../components/Loader";
 
 export default function Product() {
   const token = useAuthStore((state) => state.token);
-  const mode = useThemeStore((state) => state.theme);
-  const isDark = mode === "dark";
+  const mode = useThemeStore((state) => state.theme); 
+  
+  const isDark = mode === "dark"; // متغير سريع للفحص
 
-  const { t,i18n } = useTranslation();
-  const isAr = i18n.language === "ar"; // Check if the current language is Arabic
-  // حالات الفرز
-  const [sortBy, setSortBy] = useState("price");
-  const [ascending, setAscending] = useState(false);
-
-  const { data, isLoading } = useProducts({ page: 1, limit: 3, sortBy, ascending });
-
+  const { t } = useTranslation();
+  const { data, isLoading } = useProducts();
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const { mutateAsync: addToCart } = useAddToCart();
@@ -49,7 +39,9 @@ export default function Product() {
   });
 
   if (isLoading) {
-    return <Loader />;
+    return (
+      <Loader />
+    );
   }
 
   const handleOpenAddToCart = (e, product) => {
@@ -86,60 +78,33 @@ export default function Product() {
     }
   };
 
-  const productsList = data?.data?.response?.data || [];
+  const productsList = data?.data.response.data || [];
 
   return (
     <Box sx={{ color: isDark ? "#ffffff" : "#000000", py: 2 }}>
+      {/* Header */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          flexWrap: "wrap",
-          gap: 2,
-          mb: 3,
-          mt: 2,
+          mb: 2,
         }}
       >
         <Typography
-          variant={isAr ? "h4" : "h5"}
+          variant="h5"
           sx={{
+            mt: 4,
+            mb: 2,
             fontWeight: "bold",
             color: "var(--primary-color)",
           }}
         >
-          {t("Our Products")}
+          {t("Our Products") || "Our Products"}
         </Typography>
-
-        {/* عناصر الفرز */}
-        <Stack direction="row" spacing={2} sx={{ minWidth: 280 }}>
-          <FormControl size="small" fullWidth sx={{ backgroundColor: isDark ? "#2a2a2a" : "#fff", borderRadius: 1 }}>
-            <InputLabel sx={{ color: isDark ? "#ccc" : "inherit" }}>{t("Sort By")}</InputLabel>
-            <Select
-              value={sortBy}
-              label={t("Sort By") }
-              onChange={(e) => setSortBy(e.target.value)}
-              sx={{ color: isDark ? "#fff" : "inherit" }}
-            >
-              <MenuItem value="price">{t("Price")}</MenuItem>
-              <MenuItem value="name">{t("Name")}</MenuItem>
-              <MenuItem value="rate">{t("Rating")}</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl size="small" fullWidth sx={{ backgroundColor: isDark ? "#2a2a2a" : "#fff", borderRadius: 1 }}>
-            <InputLabel sx={{ color: isDark ? "#ccc" : "inherit" }}>{t("Order")}</InputLabel>
-            <Select
-              value={ascending}
-              label={t("Order")}
-              onChange={(e) => setAscending(e.target.value === "true" || e.target.value === true)}
-              sx={{ color: isDark ? "#fff" : "inherit" }}
-            >
-              <MenuItem value={false}>{t("High to Low")}</MenuItem>
-              <MenuItem value={true}>{t("Low to High")}</MenuItem>
-            </Select>
-          </FormControl>
-        </Stack>
+        <Button sx={{ color: "var(--primary-color)" }}>
+          {t("View All")}
+        </Button>
       </Box>
 
       {/* Products List */}
@@ -178,6 +143,8 @@ export default function Product() {
                       objectFit: "contain",
                       margin: "auto",
                       padding: "16px",
+                      // خلفية خفيفة للصورة إذا كان المنتج باللون الداكن لتبدو الصورة واضحة
+                      // backgroundColor: isDark ? "#2a2a2a" : "transparent",
                       borderRadius: 2,
                       transition: "transform 0.3s ease-in-out",
                       "&:hover": {
@@ -205,7 +172,7 @@ export default function Product() {
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "space-between",
+                        justify: "space-between",
                         alignItems: "center",
                         mt: 1,
                         gap: 4,
@@ -256,6 +223,7 @@ export default function Product() {
                           "&:hover": {
                             backgroundColor: "var(--primary-color-dark)",
                           },
+                          // ألوان الزر عند إلغاء التفعيل في الـ Dark mode
                           "&.Mui-disabled": {
                             backgroundColor: isDark ? "#333333" : "#e0e0e0",
                             color: isDark ? "#666666" : "#a1a1a1",

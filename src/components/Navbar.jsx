@@ -28,7 +28,6 @@ import {
 } from "@mui/icons-material";
 import useAuthStore from "../store/useAuthStore";
 import { useTranslation } from "react-i18next";
-import i18n from "../i18Next";
 import useThemeStore from "../store/useThemeStore";
 const SearchWrapper = styled("div")(({ theme }) => ({
   position: "relative",
@@ -82,7 +81,8 @@ export default function Navbar() {
 
   console.log("Current theme mode:", mode);
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t,i18n } = useTranslation();
+  const isAr = i18n.language === "ar"; // Check if the current language is Arabic
   const changeLanguage = () => {
     console.log(i18n.language);
     const newLang = i18n.language === "ar" ? "en" : "ar";
@@ -124,7 +124,7 @@ export default function Navbar() {
         >
           {/* اللوجو KASHOP */}
           <Typography
-            variant="h6"
+            variant={isAr ? "h2" : "h6"}
             component={Link}
             to="/"
             sx={{
@@ -158,7 +158,7 @@ export default function Navbar() {
                     height: "64px",
                     borderRadius: 0,
                     textTransform: "none",
-                    fontSize: "0.875rem",
+                    fontSize: isAr ? "1rem" : "0.95rem",
                     fontWeight: 500,
                     color: isActive
                       ? "var(--primary-color)"

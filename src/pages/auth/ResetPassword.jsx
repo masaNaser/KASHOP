@@ -23,13 +23,11 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import useThemeStore from "../../store/useThemeStore"; // 👈 استيراد الـ Theme Store
 
 export default function ResetPassword() {
-  const mode = useThemeStore((state) => state.theme); // 👈 جلب حالة الـ theme
-  const isDark = mode === "dark"; // 👈 متغير فحص للـ Dark Mode
-
+  const mode = useThemeStore((state) => state.theme); 
+  const isDark = mode === "dark"; 
   const location = useLocation();
   const navigate = useNavigate();
 
-  // حماية الصفحة من الـ null/undefined إذا تم فتحها مباشرة
   const email = location.state?.email || "";
 
   const [showPassword, setShowPassword] = useState(false);
@@ -52,7 +50,6 @@ export default function ResetPassword() {
     },
   });
 
-  // إذا لم يتوفر إيميل، يتم توجيه المستخدم لصفحة نسيت كلمة المرور
   useEffect(() => {
     if (!email) {
       navigate("/auth/sendCode");
@@ -98,7 +95,6 @@ export default function ResetPassword() {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  // 👈 تنسيق حقول الإدخال لدعم الـ Dark Mode
   const textFieldStyles = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "8px",
@@ -137,7 +133,6 @@ export default function ResetPassword() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        // 👈 خلفية الصفحة
         backgroundColor: isDark ? "#121212" : "#F8F9FC",
         color: isDark ? "#ffffff" : "#000000",
         p: 2,
@@ -191,7 +186,6 @@ export default function ResetPassword() {
           noValidate
           sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
         >
-          {/* حقل الإيميل (معطل للتعديل ولكنه يُرسل مع الـ Form) */}
           <TextField
             fullWidth
             disabled
@@ -210,7 +204,6 @@ export default function ResetPassword() {
             sx={textFieldStyles}
           />
 
-          {/* حقل الكود */}
           <TextField
             fullWidth
             type="text"

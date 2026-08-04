@@ -105,7 +105,6 @@ export default function SendCode() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        // 👈 خلفية الصفحة
         backgroundColor: isDark ? "#121212" : "#F8F9FC",
         color: isDark ? "#ffffff" : "#000000",
         p: 2,
